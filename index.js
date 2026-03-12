@@ -35,8 +35,8 @@ function makeId() {
   return Math.random().toString(36).slice(2, 10).toUpperCase();
 }
 
-// ── Welcome message builder ──────────────────────────────────────
-function buildWelcomeText(sessionStr) {
+// ── Welcome message ──────────────────────────────────────────────
+function buildWelcomeText() {
   return (
     `╔══════════════════════════════════╗\n` +
     `║  🚀 *YOUSAF-MD* — Ultra Pro Max  ║\n` +
@@ -64,8 +64,7 @@ function buildSessionText(sessionStr) {
     `╭━━━『 🔑 *YOUR SESSION ID* 』━━━╮\n\n` +
     `\`\`\`${sessionStr}\`\`\`\n\n` +
     `📌 *How to use:*\n` +
-    `Copy the above SESSION_ID and paste it in your YOUSAF-MD *.env* file:\n\n` +
-    `SESSION_ID=_YOUSAF-MD_xxxxxxxx..._\n\n` +
+    `Copy the SESSION_ID above and paste it in your YOUSAF-MD *.env* file\n\n` +
     `⚠️ *Keep this safe — do not share with anyone!*\n\n` +
     `╰━━━━━━━━━━━━━━━━━━━━━━━━╯`
   );
@@ -79,11 +78,11 @@ app.post('/pair', async (req, res) => {
   const cleaned = number.replace(/[^0-9]/g, '');
   if (cleaned.length < 10) return res.status(400).json({ error: 'Invalid phone number' });
 
-  const sessionId = makeId();
+  const sessionId  = makeId();
+  const sessionDir = `./sessions/${sessionId}`;
 
   try {
-    const sessionDir = `./sessions/${sessionId}`;
-    if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions');
+    if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
@@ -94,7 +93,9 @@ app.post('/pair', async (req, res) => {
       },
       printQRInTerminal: false,
       logger,
-      browser: ['YOUSAF-MD', 'Chrome', '1.0.0'],
+      browser          : ['YOUSAF-MD', 'Chrome', '1.0.0'],
+      connectTimeoutMs : 60000,
+      keepAliveIntervalMs: 10000,
     });
 
     sessions.set(sessionId, {
@@ -103,105 +104,156 @@ app.post('/pair', async (req, res) => {
       status    : 'pending',
       code      : null,
       sessionStr: null,
+      number    : cleaned,
     });
 
-    // Wait for socket to be ready then request pairing code
-    await new Promise(r => setTimeout(r, 2000));
+    let codeRequested = false;
 
-    const code      = await sock.requestPairingCode(cleaned);
-    const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
-
-    const s   = sessions.get(sessionId);
-    s.code    = formatted;
-    s.status  = 'code_ready';
-
-    // Connection handler
+    // ── Connection handler ───────────────────────────────────────
     sock.ev.on('connection.update', async (update) => {
-      const { connection, lastDisconnect } = update;
+      const { connection, lastDisconnect, qr } = update;
       const s = sessions.get(sessionId);
       if (!s) return;
 
-      if (connection === 'open') {
-        await saveCreds();
-        const credsPath = `${sessionDir}/creds.json`;
+      console.log(`[${sessionId}] connection.update:`, connection || 'no-connection', '| qr:', !!qr);
 
+      // Request pairing code once socket starts connecting
+      if (!codeRequested && (connection === 'connecting' || connection === 'open' || qr)) {
+        codeRequested = true;
         try {
-          const creds    = fs.readFileSync(credsPath, 'utf8');
-          const encoded  = Buffer.from(creds).toString('base64');
-          const fullId   = `YOUSAF-MD_${encoded}`;
+          await new Promise(r => setTimeout(r, 1500));
+          console.log(`[${sessionId}] Requesting pairing code for ${cleaned}...`);
+          const code      = await sock.requestPairingCode(cleaned);
+          const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+          s.code   = formatted;
+          s.status = 'code_ready';
+          console.log(`[${sessionId}] Pairing code: ${formatted}`);
+        } catch (e) {
+          console.error(`[${sessionId}] Pairing code error:`, e.message);
+          // Retry once after 2 seconds
+          try {
+            await new Promise(r => setTimeout(r, 2000));
+            const code      = await sock.requestPairingCode(cleaned);
+            const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+            s.code   = formatted;
+            s.status = 'code_ready';
+            console.log(`[${sessionId}] Pairing code (retry): ${formatted}`);
+          } catch (e2) {
+            console.error(`[${sessionId}] Pairing code retry failed:`, e2.message);
+            s.status = 'failed';
+          }
+        }
+      }
+
+      // Connected — user entered the code in WhatsApp
+      if (connection === 'open') {
+        console.log(`[${sessionId}] WhatsApp connected!`);
+        await saveCreds();
+
+        const credsPath = `${sessionDir}/creds.json`;
+        try {
+          await new Promise(r => setTimeout(r, 1000));
+          const creds   = fs.readFileSync(credsPath, 'utf8');
+          const encoded = Buffer.from(creds).toString('base64');
+          const fullId  = `YOUSAF-MD_${encoded}`;
 
           s.sessionStr = fullId;
           s.status     = 'connected';
 
-          // ── Send messages to linked WhatsApp ────────────────
           const jid = cleaned + '@s.whatsapp.net';
 
-          // Message 1: Bot image + welcome + social links
+          // Message 1: Welcome + social links (with image if available)
           try {
             const thumbPath = path.resolve('./assets/bot-thumb.png');
             if (fs.existsSync(thumbPath)) {
               await sock.sendMessage(jid, {
                 image  : fs.readFileSync(thumbPath),
-                caption: buildWelcomeText(fullId),
+                caption: buildWelcomeText(),
               });
             } else {
-              await sock.sendMessage(jid, { text: buildWelcomeText(fullId) });
+              await sock.sendMessage(jid, { text: buildWelcomeText() });
             }
           } catch (msgErr) {
-            console.error('[PAIRING] Welcome msg failed:', msgErr.message);
+            console.error(`[${sessionId}] Welcome msg failed:`, msgErr.message);
           }
 
-          // Small delay between messages
-          await new Promise(r => setTimeout(r, 1500));
+          // Delay between messages
+          await new Promise(r => setTimeout(r, 2000));
 
           // Message 2: SESSION_ID only — separate message
           try {
             await sock.sendMessage(jid, { text: buildSessionText(fullId) });
           } catch (msgErr) {
-            console.error('[PAIRING] Session msg failed:', msgErr.message);
+            console.error(`[${sessionId}] Session msg failed:`, msgErr.message);
           }
 
-          console.log(`[PAIRING] Session ${sessionId} connected & messages sent!`);
+          console.log(`[${sessionId}] Messages sent!`);
 
         } catch (e) {
           s.status = 'error';
-          console.error('[PAIRING] creds read error:', e.message);
+          console.error(`[${sessionId}] creds error:`, e.message);
         }
 
         // Close socket after done
-        setTimeout(() => { try { sock.end(); } catch (_) {} }, 3000);
+        setTimeout(() => {
+          try { sock.end(); } catch (_) {}
+        }, 5000);
       }
 
+      // Connection closed
       if (connection === 'close') {
-        const reason = lastDisconnect?.error?.output?.statusCode;
-        if (reason !== DisconnectReason.loggedOut && s?.status !== 'connected') {
-          s.status = 'failed';
+        const statusCode = lastDisconnect?.error?.output?.statusCode;
+        console.log(`[${sessionId}] Connection closed. Code: ${statusCode} | Status: ${s.status}`);
+
+        // Only mark failed if not already connected and not a normal logout
+        if (s.status !== 'connected' && statusCode !== DisconnectReason.loggedOut) {
+          // If we have a pairing code already, don't mark failed — user might still be entering it
+          if (s.status === 'code_ready') {
+            console.log(`[${sessionId}] Code shown, waiting for user...`);
+            // Don't mark failed — keep waiting
+          } else {
+            s.status = 'failed';
+          }
         }
       }
     });
 
     sock.ev.on('creds.update', saveCreds);
 
-    return res.json({ sessionId, code: formatted });
+    // Wait max 8 seconds for pairing code before responding
+    let waited = 0;
+    while (!sessions.get(sessionId)?.code && waited < 8000) {
+      await new Promise(r => setTimeout(r, 300));
+      waited += 300;
+    }
+
+    const s = sessions.get(sessionId);
+    if (!s?.code) {
+      sessions.delete(sessionId);
+      try { sock.end(); } catch (_) {}
+      return res.status(500).json({ error: 'Could not generate pairing code. Try again.' });
+    }
+
+    return res.json({ sessionId, code: s.code });
 
   } catch (e) {
-    console.error('[PAIRING] Error:', e.message);
+    console.error('[PAIRING] Fatal error:', e.message);
     sessions.delete(sessionId);
-    return res.status(500).json({ error: 'Failed to generate pairing code. Try again.' });
+    return res.status(500).json({ error: 'Server error. Try again.' });
   }
 });
 
 // ── GET /status/:sessionId ───────────────────────────────────────
 app.get('/status/:sessionId', (req, res) => {
   const s = sessions.get(req.params.sessionId);
-  if (!s) return res.status(404).json({ error: 'Session not found' });
+  if (!s) return res.status(404).json({ error: 'Session not found or expired' });
 
   if (s.status === 'connected' && s.sessionStr) {
-    // Cleanup after 30s
+    // Cleanup after 60s
     setTimeout(() => {
       try { fs.rmSync(`./sessions/${req.params.sessionId}`, { recursive: true, force: true }); } catch (_) {}
       sessions.delete(req.params.sessionId);
-    }, 30000);
+    }, 60000);
 
     return res.json({ status: 'connected', sessionId: s.sessionStr });
   }
@@ -211,13 +263,13 @@ app.get('/status/:sessionId', (req, res) => {
 
 // ── Health check ─────────────────────────────────────────────────
 app.get('/health', (_, res) => res.json({
-  status : 'ok',
-  bot    : 'YOUSAF-MD-PAIRING',
-  author : 'MR YOUSAF BALOCH',
-  github : 'https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING',
+  status   : 'ok',
+  bot      : 'YOUSAF-MD-PAIRING',
+  author   : 'MR YOUSAF BALOCH',
+  sessions : sessions.size,
 }));
 
-// ── Frontend fallback ────────────────────────────────────────────
+// ── Frontend ──────────────────────────────────────────────────────
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -229,7 +281,6 @@ app.listen(PORT, () => {
 ║   🚀 YOUSAF-MD-PAIRING is running!       ║
 ║   🌐 Port: ${PORT}                           ║
 ║   👑 By: MR YOUSAF BALOCH               ║
-║   💻 github.com/yousafpubg110-tech      ║
 ╚══════════════════════════════════════════╝
   `);
 });
