@@ -1,0 +1,37 @@
+{
+  "name": "YOUSAF-MD-PAIRING",
+  "description": "Official WhatsApp Session Generator for YOUSAF-MD by MR YOUSAF BALOCH",
+  "repository": "https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING",
+  "logo": "https://avatars.githubusercontent.com/u/yousafpubg110-tech",
+  "keywords": [
+    "whatsapp",
+    "baileys",
+    "pairing",
+    "session",
+    "yousaf-md",
+    "bot"
+  ],
+  "website": "https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "echo YOUSAF-MD-PAIRING deployed successfully!"
+  },
+  "env": {
+    "PORT": {
+      "description": "Port for the web server — Heroku sets this automatically",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "stack": "heroku-24"
+}
