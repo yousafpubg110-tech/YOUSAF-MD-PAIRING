@@ -1,0 +1,21 @@
+{
+  "name": "yousaf-md-pairing",
+  "version": "1.0.0",
+  "description": "WhatsApp Pairing Code Generator for YOUSAF-MD by MR YOUSAF BALOCH",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "express": "^4.18.2",
+    "pino": "^8.15.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "MR YOUSAF BALOCH",
+  "license": "GPL-3.0"
+}
