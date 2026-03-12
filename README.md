@@ -6,49 +6,23 @@
 
 <br/><br/>
 
-[
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/stargazers"><img src="https://img.shields.io/github/stars/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=ffd700&labelColor=0d0221&label=⭐%20STARS"/></a>
+&nbsp;
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/network/members"><img src="https://img.shields.io/github/forks/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=00fff7&labelColor=0d0221&label=🍴%20FORKS"/></a>
+&nbsp;
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/issues"><img src="https://img.shields.io/github/issues/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=ff00aa&labelColor=0d0221&label=🐛%20ISSUES"/></a>
+&nbsp;
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/github/repo-size/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=9d00ff&labelColor=0d0221&label=📦%20SIZE"/></a>
 
-![Stars](https://img.shields.io/github/stars/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=ffd700&labelColor=0d0221&label=⭐%20STARS)
+<br/><br/>
 
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/stargazers)
-[
-
-![Forks](https://img.shields.io/github/forks/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=00fff7&labelColor=0d0221&label=🍴%20FORKS)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/network/members)
-[
-
-![Issues](https://img.shields.io/github/issues/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=ff00aa&labelColor=0d0221&label=🐛%20ISSUES)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/issues)
-[
-
-![Size](https://img.shields.io/github/repo-size/yousafpubg110-tech/YOUSAF-MD-PAIRING?style=for-the-badge&color=9d00ff&labelColor=0d0221&label=📦%20SIZE)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)
-
-<br/>
-
-[
-
-![Version](https://img.shields.io/badge/Version-2.0.0-ff6b35?style=for-the-badge&labelColor=0d0221)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)
-[
-
-![Node](https://img.shields.io/badge/Node.js-20+-00fff7?style=for-the-badge&logo=node.js&logoColor=00fff7&labelColor=0d0221)
-
-](https://nodejs.org)
-[
-
-![License](https://img.shields.io/badge/License-GPL%20v3-ff00aa?style=for-the-badge&logo=gnu&logoColor=white&labelColor=0d0221)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/blob/main/LICENSE)
-[
-
-![Status](https://img.shields.io/badge/STATUS-🟢%20ACTIVE-00fff7?style=for-the-badge&labelColor=0d0221)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/Version-2.0.0-ff6b35?style=for-the-badge&labelColor=0d0221"/></a>
+&nbsp;
+<a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-20+-00fff7?style=for-the-badge&logo=node.js&logoColor=00fff7&labelColor=0d0221"/></a>
+&nbsp;
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPL%20v3-ff00aa?style=for-the-badge&logo=gnu&logoColor=white&labelColor=0d0221"/></a>
+&nbsp;
+<a href="https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/STATUS-🟢%20ACTIVE-00fff7?style=for-the-badge&labelColor=0d0221"/></a>
 
 </div>
 
@@ -74,8 +48,8 @@
 
 <div align="center">
 
-> **YOUSAF-MD-PAIRING** is the **Official WhatsApp Session Generator** for [YOUSAF-MD](https://github.com/yousafpubg110-tech/YOUSAF-MD) bot system.
-> Users enter number → get **8-digit pairing code** → link in WhatsApp → **SESSION_ID** arrives in inbox!
+> **YOUSAF-MD-PAIRING** is the **Official WhatsApp Session Generator** for YOUSAF-MD bot system.
+> Users enter number → get **8-digit pairing code** → link in WhatsApp → **SESSION_ID** arrives in inbox. No QR scanning needed!
 
 </div>
 
@@ -89,7 +63,7 @@
 |:------:|:----:|:------:|:------:|
 | 🌐 | `01` | **Visit Site** | Open your deployed pairing URL |
 | 📱 | `02` | **Enter Number** | WhatsApp number with country code |
-| 🔑 | `03` | **Get Code** | 8-digit pairing code appears |
+| 🔑 | `03` | **Get Code** | 8-digit pairing code appears instantly |
 | 📲 | `04` | **Link WhatsApp** | Linked Devices → Link with Phone Number |
 | 📩 | `05` | **Get SESSION_ID** | Sent directly to your WhatsApp inbox |
 | 🚀 | `06` | **Deploy Bot** | Paste SESSION_ID in `.env` and deploy |
@@ -104,105 +78,18 @@
 
 | 🎯 CATEGORY | ✨ FEATURES | 📊 STATUS |
 |:-----------:|:----------:|:---------:|
-| [
-
-![](https://img.shields.io/badge/🤖%20AI%20TOOLS-ff6b35?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | ChatGPT, Gemini, GPT-4, Claude, DeepSeek | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/📥%20DOWNLOADERS-9d00ff?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | YouTube, TikTok, Instagram, Facebook, Twitter | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/🎭%20STICKER%20MAKER-ff00aa?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Image, Video, Text, Animated, Emoji Mix | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/👥%20GROUP%20TOOLS-00b4d8?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | TagAll, Kick, Add, Promote, AntiLink, Welcome | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/⚙️%20AUTO%20FEATURES-ffd700?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Auto Status, Anti-Delete, Auto Reply, AutoBio | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/😄%20FUN%20%26%20GAMES-22c55e?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Jokes, Memes, Truth/Dare, Quiz, Dice | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/☪️%20ISLAMIC%20TOOLS-4f46e5?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Quran, Hadith, Prayer Times, Dua, Hijri | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/🏏%20CRICKET%20LIVE-ef4444?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Live Score, PSL, IPL, Schedule, Stats | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/💰%20ECONOMY-f59e0b?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Daily Reward, Work, Shop, Leaderboard | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/🎵%20MUSIC%20TOOLS-a78bfa?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Search, Lyrics, Play, Naat, Bayan Download | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
-| [
-
-![](https://img.shields.io/badge/🛡️%20GROUP%20PROTECT-dc2626?style=flat-square&labelColor=000)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) | Anti-Abuse, Anti-VV, Anti-Spam, Warn System | [
-
-![](https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square)
-
-](https://github.com/yousafpubg110-tech/YOUSAF-MD) |
+| <img src="https://img.shields.io/badge/🤖%20AI%20TOOLS-ff6b35?style=flat-square&labelColor=000"/> | ChatGPT, Gemini, GPT-4, Claude, DeepSeek | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/📥%20DOWNLOADERS-9d00ff?style=flat-square&labelColor=000"/> | YouTube, TikTok, Instagram, Facebook, Twitter | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/🎭%20STICKER%20MAKER-ff00aa?style=flat-square&labelColor=000"/> | Image, Video, Text, Animated, Emoji Mix | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/👥%20GROUP%20TOOLS-00b4d8?style=flat-square&labelColor=000"/> | TagAll, Kick, Add, Promote, AntiLink, Welcome | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/⚙️%20AUTO%20FEATURES-ffd700?style=flat-square&labelColor=000"/> | Auto Status, Anti-Delete, Auto Reply, AutoBio | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/😄%20FUN%20%26%20GAMES-22c55e?style=flat-square&labelColor=000"/> | Jokes, Memes, Truth/Dare, Quiz, Dice | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/☪️%20ISLAMIC%20TOOLS-4f46e5?style=flat-square&labelColor=000"/> | Quran, Hadith, Prayer Times, Dua, Hijri | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/🏏%20CRICKET%20LIVE-ef4444?style=flat-square&labelColor=000"/> | Live Score, PSL, IPL, Schedule, Stats | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/💰%20ECONOMY-f59e0b?style=flat-square&labelColor=000"/> | Daily Reward, Work, Shop, Leaderboard | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/🎵%20MUSIC%20TOOLS-a78bfa?style=flat-square&labelColor=000"/> | Search, Lyrics, Play, Naat, Bayan Download | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/🛡️%20GROUP%20PROTECT-dc2626?style=flat-square&labelColor=000"/> | Anti-Abuse, Anti-VV, Anti-Spam, Warn System | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
+| <img src="https://img.shields.io/badge/🔍%20SEARCH%20ENGINE-0ea5e9?style=flat-square&labelColor=000"/> | Google, Wikipedia, Lyrics, News, GitHub | <img src="https://img.shields.io/badge/✅-ACTIVE-00c851?style=flat-square"/> |
 
 <br/>
 
@@ -212,157 +99,43 @@
 
 ---
 
-## ☁️ Cloud Platforms — One Click Deploy
+## ☁️ CLOUD PLATFORMS — ONE CLICK DEPLOY
 
 <div align="center">
-
 <br/>
 
-[
+<a href="https://heroku.com/deploy?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20HEROKU-000000?style=for-the-badge&logo=heroku&logoColor=white"/></a>&nbsp;<a href="https://heroku.com/deploy?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-7c3aed?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://app.koyeb.com/deploy?type=git&repository=github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING&branch=main"><img src="https://img.shields.io/badge/⬤%20KOYEB-000000?style=for-the-badge"/></a>&nbsp;<a href="https://app.koyeb.com/deploy?type=git&repository=github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING&branch=main"><img src="https://img.shields.io/badge/DEPLOY%20NOW-ff00aa?style=for-the-badge"/></a>
 
-![](https://img.shields.io/badge/⬤%20HEROKU-000000?style=for-the-badge&logo=heroku&logoColor=white)
+<br/><br/>
 
-](https://heroku.com)&nbsp;[
+<a href="https://railway.app/new/template?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20RAILWAY-000000?style=for-the-badge&logo=railway&logoColor=white"/></a>&nbsp;<a href="https://railway.app/new/template?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-7c3aed?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://render.com/deploy?repo=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20RENDER-000000?style=for-the-badge&logo=render&logoColor=white"/></a>&nbsp;<a href="https://render.com/deploy?repo=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-22c55e?style=for-the-badge"/></a>
 
-![](https://img.shields.io/badge/DEPLOY%20NOW-7c3aed?style=for-the-badge)
+<br/><br/>
 
-](https://heroku.com/deploy?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)&nbsp;&nbsp;&nbsp;&nbsp;[
+<a href="https://replit.com/github/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20REPLIT-000000?style=for-the-badge&logo=replit&logoColor=orange"/></a>&nbsp;<a href="https://replit.com/github/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-ff6b35?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://vercel.com/new/clone?repository-url=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white"/></a>&nbsp;<a href="https://vercel.com/new/clone?repository-url=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-555555?style=for-the-badge"/></a>
 
-![](https://img.shields.io/badge/⬤%20KOYEB-000000?style=for-the-badge)
+<br/><br/>
 
-](https://koyeb.com)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-ff00aa?style=for-the-badge)
-
-](https://app.koyeb.com/deploy?type=git&repository=github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING&branch=main)
-
-<br/>
-
-[
-
-![](https://img.shields.io/badge/⬤%20RAILWAY-000000?style=for-the-badge&logo=railway&logoColor=white)
-
-](https://railway.app)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-7c3aed?style=for-the-badge)
-
-](https://railway.app/new/template?template=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)&nbsp;&nbsp;&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20RENDER-000000?style=for-the-badge&logo=render&logoColor=white)
-
-](https://render.com)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-22c55e?style=for-the-badge)
-
-](https://render.com/deploy?repo=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)
-
-<br/>
-
-[
-
-![](https://img.shields.io/badge/⬤%20REPLIT-000000?style=for-the-badge&logo=replit&logoColor=orange)
-
-](https://replit.com)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-ff6b35?style=for-the-badge)
-
-](https://replit.com/github/yousafpubg110-tech/YOUSAF-MD-PAIRING)&nbsp;&nbsp;&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white)
-
-](https://vercel.com)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-555555?style=for-the-badge)
-
-](https://vercel.com/new/clone?repository-url=https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING)
-
-<br/>
-
-[
-
-![](https://img.shields.io/badge/⬤%20GLITCH-000000?style=for-the-badge&logo=glitch&logoColor=yellow)
-
-](https://glitch.com)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-2563eb?style=for-the-badge)
-
-](https://glitch.com/edit/#!/import/github/yousafpubg110-tech/YOUSAF-MD-PAIRING)&nbsp;&nbsp;&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20CYCLIC-000000?style=for-the-badge)
-
-](https://cyclic.sh)&nbsp;[
-
-![](https://img.shields.io/badge/DEPLOY%20NOW-00b4d8?style=for-the-badge)
-
-](https://cyclic.sh)
+<a href="https://glitch.com/edit/#!/import/github/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/⬤%20GLITCH-000000?style=for-the-badge&logo=glitch&logoColor=yellow"/></a>&nbsp;<a href="https://glitch.com/edit/#!/import/github/yousafpubg110-tech/YOUSAF-MD-PAIRING"><img src="https://img.shields.io/badge/DEPLOY%20NOW-2563eb?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cyclic.sh"><img src="https://img.shields.io/badge/⬤%20CYCLIC-000000?style=for-the-badge"/></a>&nbsp;<a href="https://cyclic.sh"><img src="https://img.shields.io/badge/DEPLOY%20NOW-00b4d8?style=for-the-badge"/></a>
 
 </div>
 
 ---
 
-## 🖥️ VPS / Dedicated Server Platforms
+## 🖥️ VPS / DEDICATED SERVER PLATFORMS
 
 <div align="center">
-
 <br/>
 
-[
+<a href="https://digitalocean.com"><img src="https://img.shields.io/badge/⬤%20DIGITALOCEAN-000000?style=for-the-badge&logo=digitalocean&logoColor=0080FF"/></a>&nbsp;<a href="https://digitalocean.com"><img src="https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;<a href="https://aws.amazon.com"><img src="https://img.shields.io/badge/⬤%20AWS-000000?style=for-the-badge&logo=amazonaws&logoColor=FF9900"/></a>&nbsp;<a href="https://aws.amazon.com"><img src="https://img.shields.io/badge/OPEN-f59e0b?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;<a href="https://azure.microsoft.com"><img src="https://img.shields.io/badge/⬤%20AZURE-000000?style=for-the-badge&logo=microsoftazure&logoColor=0078D4"/></a>&nbsp;<a href="https://azure.microsoft.com"><img src="https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge"/></a>
 
-![](https://img.shields.io/badge/⬤%20DIGITALOCEAN-000000?style=for-the-badge&logo=digitalocean&logoColor=0080FF)
+<br/><br/>
 
-](https://digitalocean.com)&nbsp;[
+<a href="https://cloud.google.com"><img src="https://img.shields.io/badge/⬤%20GOOGLE%20CLOUD-000000?style=for-the-badge&logo=googlecloud&logoColor=4285F4"/></a>&nbsp;<a href="https://cloud.google.com"><img src="https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge"/></a>&nbsp;&nbsp;&nbsp;<a href="https://oracle.com/cloud/free"><img src="https://img.shields.io/badge/⬤%20ORACLE%20CLOUD-000000?style=for-the-badge&logo=oracle&logoColor=F80000"/></a>&nbsp;<a href="https://oracle.com/cloud/free"><img src="https://img.shields.io/badge/OPEN%20(FREE)-ef4444?style=for-the-badge"/></a>
 
-![](https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge)
+<br/><br/>
 
-](https://digitalocean.com)&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20AWS-000000?style=for-the-badge&logo=amazonaws&logoColor=FF9900)
-
-](https://aws.amazon.com)&nbsp;[
-
-![](https://img.shields.io/badge/OPEN-f59e0b?style=for-the-badge)
-
-](https://aws.amazon.com)&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20AZURE-000000?style=for-the-badge&logo=microsoftazure&logoColor=0078D4)
-
-](https://azure.microsoft.com)&nbsp;[
-
-![](https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge)
-
-](https://azure.microsoft.com)
-
-<br/>
-
-[
-
-![](https://img.shields.io/badge/⬤%20GOOGLE%20CLOUD-000000?style=for-the-badge&logo=googlecloud&logoColor=4285F4)
-
-](https://cloud.google.com)&nbsp;[
-
-![](https://img.shields.io/badge/OPEN-2563eb?style=for-the-badge)
-
-](https://cloud.google.com)&nbsp;&nbsp;[
-
-![](https://img.shields.io/badge/⬤%20ORACLE%20CLOUD-000000?style=for-the-badge&logo=oracle&logoColor=F80000)
-
-](https://oracle.com/cloud)&nbsp;[
-
-![](https://img.shields.io/badge/OPEN%20(FREE)
-
--ef4444?style=for-the-badge)](https://oracle.com/cloud/free)
-
-<br/>
-
-[
-
-![](https://img.shields.io/badge/⬤%20CONTABO%20VPS-000000?style=for-the-badge)
-
-](https://contabo.com)&nbsp;[
-
-![](https://img.shields.io/badge/OPEN-ef4444?style=for-the-badge)
-
-](https://contabo.com)
+<a href="https://contabo.com"><img src="https://img.shields.io/badge/⬤%20CONTABO%20VPS-000000?style=for-the-badge"/></a>&nbsp;<a href="https://contabo.com"><img src="https://img.shields.io/badge/OPEN-ef4444?style=for-the-badge"/></a>
 
 </div>
 
@@ -382,7 +155,7 @@ YOUSAF-MD-PAIRING/
 │   └── 📄 index.html        ← Ultra Pro Max Frontend UI
 │
 ├── 📁 assets/
-│   └── 🖼️ bot-thumb.png     ← Image sent with SESSION_ID (optional)
+│   └── 🖼️ bot-thumb.png     ← Image sent with SESSION_ID
 │
 └── 📁 sessions/             ← Auto-created temp files
 ---
@@ -402,84 +175,54 @@ npm install
 # Run
 npm start
 
-# Visit: http://localhost:3000
+# Visit → http://localhost:3000
 🛠️ Tech Stack
 �
 
-[
-�
-Load image
-](https://nodejs.org)
-[
-�
-Load image
-](https://expressjs.com)
-[
-�
-Load image
-](https://github.com/WhiskeySockets/Baileys)
-[
-�
-Load image
-](https://developer.mozilla.org/docs/Web/HTML)
-[
-�
-Load image
-](https://developer.mozilla.org/docs/Web/CSS)
-[
-�
-Load image
-](https://developer.mozilla.org/docs/Web/JavaScript)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
 �
 
-🤖 Main Bot Repo
+🤖 Main Bot Repo — YOUSAF-MD
 �
 
 Get your SESSION_ID here, then deploy the full bot:
 �
 
 
-[
-�
-Load image
-](https://github.com/yousafpubg110-tech/YOUSAF-MD)
-�
-
-⚡ Connect With Muhammad Yousaf Baloch ⚡
-�
 
 �
 
+⚡ Connect With Muhammad Yousaf Baloch
+�
 
-[
-�
-Load image
-](https://youtube.com/@Yousaf_Baloch_Tech)
-[
-�
-Load image
-](https://tiktok.com/@loser_boy.110)
-[
-�
-Load image
-](https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j)
-[
-�
-Load image
-](https://github.com/yousafpubg110-tech)
-[
-�
-Load image
-](https://wa.me/923710636110)
+
+
+
+
+
+
+
+
+
+
+
 �
 
 📜 License
 �
 
-[
-�
-Load image
-](https://github.com/yousafpubg110-tech/YOUSAF-MD-PAIRING/blob/main/LICENSE)
+
+
 GNU General Public License v3.0
 © 2026 Muhammad Yousaf Baloch — All Rights Reserved
 �
@@ -495,6 +238,6 @@ GNU General Public License v3.0
 ￼
 
 �
-Load image
+￼
 �
 ```
