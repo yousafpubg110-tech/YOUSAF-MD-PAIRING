@@ -1,10 +1,7 @@
 /*
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 ┃   YOUSAF-MD-PAIRING                       ┃
-┃   WhatsApp Session Generator              ┃
 ┃   Created by MR YOUSAF BALOCH            ┃
-┃   GitHub: yousafpubg110-tech             ┃
-┃   License: GNU GPL v3                    ┃
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 import 'dotenv/config';
@@ -38,20 +35,18 @@ function buildWelcomeText() {
   return (
     `╔══════════════════════════════════╗\n` +
     `║  🚀 *YOUSAF-MD* — Ultra Pro Max  ║\n` +
-    `║  ✨ Best WhatsApp Bot Ever ✨     ║\n` +
     `╚══════════════════════════════════╝\n\n` +
     `✅ *Session Generated Successfully!*\n\n` +
-    `🎉 *Welcome to YOUSAF-MD Bot!*\n\n` +
     `╭─『 👑 *BOT INFO* 』\n` +
     `│ 🤖 *Bot:*    YOUSAF-MD\n` +
     `│ 👑 *Owner:*  MR YOUSAF BALOCH\n` +
     `│ 📱 *Number:* +923710636110\n` +
     `╰──────────────────────────\n\n` +
     `╭─『 🔗 *SOCIAL MEDIA* 』\n` +
-    `│ 📢 *Channel:*  https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j\n` +
-    `│ 📺 *YouTube:*  https://youtube.com/@Yousaf_Baloch_Tech\n` +
-    `│ 🎵 *TikTok:*   https://tiktok.com/@loser_boy.110\n` +
-    `│ 💻 *GitHub:*   https://github.com/yousafpubg110-tech/YOUSAF-MD\n` +
+    `│ 📢 https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j\n` +
+    `│ 📺 https://youtube.com/@Yousaf_Baloch_Tech\n` +
+    `│ 🎵 https://tiktok.com/@loser_boy.110\n` +
+    `│ 💻 https://github.com/yousafpubg110-tech/YOUSAF-MD\n` +
     `╰──────────────────────────\n\n` +
     `_© 2026 YOUSAF-MD | By MR YOUSAF BALOCH_`
   );
@@ -62,191 +57,169 @@ function buildSessionText(sessionStr) {
     `╭━━━『 🔑 *YOUR SESSION ID* 』━━━╮\n\n` +
     `\`\`\`${sessionStr}\`\`\`\n\n` +
     `📌 *How to use:*\n` +
-    `Copy the SESSION_ID above and paste it in your YOUSAF-MD *.env* file\n\n` +
-    `⚠️ *Keep this safe — do not share with anyone!*\n\n` +
+    `Paste SESSION_ID in your YOUSAF-MD *.env* file\n\n` +
+    `⚠️ *Do not share with anyone!*\n\n` +
     `╰━━━━━━━━━━━━━━━━━━━━━━━━╯`
   );
 }
 
-// ── Main pairing function ────────────────────────────────────────
-async function startPairing(cleaned, sessionId) {
+// ── Background pairing — runs without blocking HTTP ──────────────
+function runPairing(cleaned, sessionId) {
   const sessionDir = `./sessions/${sessionId}`;
-  if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
-  const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+  (async () => {
+    try {
+      if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
-  const sock = makeWASocket({
-    auth: {
-      creds: state.creds,
-      keys : makeCacheableSignalKeyStore(state.keys, logger),
-    },
-    printQRInTerminal   : false,
-    logger,
-    browser             : ['YOUSAF-MD', 'Chrome', '1.0.0'],
-    connectTimeoutMs    : 60000,
-    keepAliveIntervalMs : 10000,
-    markOnlineOnConnect : false,
-  });
+      const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
-  sessions.set(sessionId, {
-    sock,
-    saveCreds,
-    status    : 'pending',
-    code      : null,
-    sessionStr: null,
-    number    : cleaned,
-  });
+      const sock = makeWASocket({
+        auth: {
+          creds: state.creds,
+          keys : makeCacheableSignalKeyStore(state.keys, logger),
+        },
+        printQRInTerminal   : false,
+        logger,
+        browser             : ['Ubuntu', 'Chrome', '20.0.04'],
+        connectTimeoutMs    : 60000,
+        keepAliveIntervalMs : 10000,
+        markOnlineOnConnect : false,
+      });
 
-  sock.ev.on('creds.update', saveCreds);
-
-  return new Promise((resolve, reject) => {
-    let codeRequested = false;
-    let resolved      = false;
-
-    const timeout = setTimeout(() => {
-      if (!resolved) {
-        resolved = true;
-        const s = sessions.get(sessionId);
-        if (s) s.status = 'failed';
-        try { sock.end(); } catch (_) {}
-        reject(new Error('Timeout — could not connect to WhatsApp'));
-      }
-    }, 30000);
-
-    sock.ev.on('connection.update', async (update) => {
-      const { connection, lastDisconnect, qr, isNewLogin } = update;
       const s = sessions.get(sessionId);
-      if (!s) return;
+      if (s) s.sock = sock;
 
-      console.log(`[${sessionId}] update:`, JSON.stringify({ connection, hasQR: !!qr, isNewLogin }));
+      sock.ev.on('creds.update', saveCreds);
 
-      // ── Request pairing code when WhatsApp shows QR ──────────
-      // This means socket is connected to WA servers & ready
-      if (qr && !codeRequested) {
-        codeRequested = true;
-        console.log(`[${sessionId}] QR received — requesting pairing code instead...`);
-        try {
-          const code      = await sock.requestPairingCode(cleaned);
-          const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
-          s.code   = formatted;
-          s.status = 'code_ready';
-          console.log(`[${sessionId}] ✅ Pairing code: ${formatted}`);
+      let codeRequested = false;
 
-          if (!resolved) {
-            resolved = true;
-            clearTimeout(timeout);
-            resolve(formatted);
-          }
-        } catch (e) {
-          console.error(`[${sessionId}] requestPairingCode failed:`, e.message);
-          if (!resolved) {
-            resolved = true;
-            clearTimeout(timeout);
+      sock.ev.on('connection.update', async (update) => {
+        const { connection, lastDisconnect, qr } = update;
+        const s = sessions.get(sessionId);
+        if (!s) return;
+
+        console.log(`[${sessionId}] connection: ${connection} | qr: ${!!qr}`);
+
+        // ── QR received = socket connected to WA servers ─────
+        if (qr && !codeRequested) {
+          codeRequested = true;
+          console.log(`[${sessionId}] QR ready — requesting pairing code...`);
+
+          try {
+            const code      = await sock.requestPairingCode(cleaned);
+            const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+            s.code   = formatted;
+            s.status = 'code_ready';
+            console.log(`[${sessionId}] ✅ Code: ${formatted}`);
+          } catch (err) {
+            console.error(`[${sessionId}] Code error:`, err.message);
             s.status = 'failed';
             try { sock.end(); } catch (_) {}
-            reject(e);
           }
         }
-      }
 
-      // ── User entered code — WhatsApp connected ───────────────
-      if (connection === 'open') {
-        console.log(`[${sessionId}] ✅ WhatsApp connected!`);
-        await saveCreds();
+        // ── User entered code successfully ───────────────────
+        if (connection === 'open') {
+          console.log(`[${sessionId}] ✅ Connected!`);
+          await saveCreds();
 
-        const credsPath = `${sessionDir}/creds.json`;
-        try {
-          await new Promise(r => setTimeout(r, 1000));
-          const creds   = fs.readFileSync(credsPath, 'utf8');
-          const encoded = Buffer.from(creds).toString('base64');
-          const fullId  = `YOUSAF-MD_${encoded}`;
-
-          s.sessionStr = fullId;
-          s.status     = 'connected';
-
-          const jid = cleaned + '@s.whatsapp.net';
-
-          // Message 1 — welcome
           try {
-            const thumbPath = path.resolve('./assets/bot-thumb.png');
-            if (fs.existsSync(thumbPath)) {
-              await sock.sendMessage(jid, {
-                image  : fs.readFileSync(thumbPath),
-                caption: buildWelcomeText(),
-              });
-            } else {
-              await sock.sendMessage(jid, { text: buildWelcomeText() });
+            await new Promise(r => setTimeout(r, 1500));
+            const creds   = fs.readFileSync(`${sessionDir}/creds.json`, 'utf8');
+            const encoded = Buffer.from(creds).toString('base64');
+            const fullId  = `YOUSAF-MD_${encoded}`;
+
+            s.sessionStr = fullId;
+            s.status     = 'connected';
+
+            const jid = `${cleaned}@s.whatsapp.net`;
+
+            // Send welcome message
+            try {
+              const thumb = path.resolve('./assets/bot-thumb.png');
+              if (fs.existsSync(thumb)) {
+                await sock.sendMessage(jid, {
+                  image  : fs.readFileSync(thumb),
+                  caption: buildWelcomeText(),
+                });
+              } else {
+                await sock.sendMessage(jid, { text: buildWelcomeText() });
+              }
+            } catch (e) {
+              console.error(`[${sessionId}] Welcome error:`, e.message);
             }
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Send session ID
+            try {
+              await sock.sendMessage(jid, { text: buildSessionText(fullId) });
+            } catch (e) {
+              console.error(`[${sessionId}] Session msg error:`, e.message);
+            }
+
           } catch (e) {
-            console.error(`[${sessionId}] Welcome msg error:`, e.message);
+            s.status = 'error';
+            console.error(`[${sessionId}] creds error:`, e.message);
           }
 
-          await new Promise(r => setTimeout(r, 2000));
+          setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
+        }
 
-          // Message 2 — SESSION_ID
-          try {
-            await sock.sendMessage(jid, { text: buildSessionText(fullId) });
-          } catch (e) {
-            console.error(`[${sessionId}] Session msg error:`, e.message);
+        // ── Connection closed ────────────────────────────────
+        if (connection === 'close') {
+          const code = lastDisconnect?.error?.output?.statusCode;
+          console.log(`[${sessionId}] Closed. code: ${code} | status: ${s.status}`);
+
+          if (s.status === 'connected') return;
+          if (s.status === 'code_ready') {
+            // User still entering code — keep alive
+            console.log(`[${sessionId}] Waiting for user to enter code...`);
+            return;
           }
 
-          console.log(`[${sessionId}] ✅ Messages sent!`);
-
-        } catch (e) {
-          s.status = 'error';
-          console.error(`[${sessionId}] creds error:`, e.message);
+          s.status = 'failed';
         }
+      });
 
-        setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
-      }
-
-      // ── Connection closed ────────────────────────────────────
-      if (connection === 'close') {
-        const statusCode = lastDisconnect?.error?.output?.statusCode;
-        console.log(`[${sessionId}] Closed. statusCode: ${statusCode} | status: ${s.status}`);
-
-        if (s.status === 'connected') return;
-        if (s.status === 'code_ready') {
-          // User is still entering code — do NOT fail
-          console.log(`[${sessionId}] Code shown, waiting for user...`);
-          return;
-        }
-
-        s.status = 'failed';
-        if (!resolved) {
-          resolved = true;
-          clearTimeout(timeout);
-          reject(new Error('Connection closed before pairing'));
-        }
-      }
-    });
-  });
+    } catch (e) {
+      console.error(`[${sessionId}] runPairing error:`, e.message);
+      const s = sessions.get(sessionId);
+      if (s) s.status = 'failed';
+    }
+  })();
 }
 
-// ── POST /pair ───────────────────────────────────────────────────
-app.post('/pair', async (req, res) => {
+// ── POST /pair — returns immediately ────────────────────────────
+app.post('/pair', (req, res) => {
   const { number } = req.body;
-  if (!number) return res.status(400).json({ error: 'Phone number is required' });
+  if (!number) return res.status(400).json({ error: 'Phone number required' });
 
   const cleaned = number.replace(/[^0-9]/g, '');
-  if (cleaned.length < 10) return res.status(400).json({ error: 'Invalid phone number' });
+  if (cleaned.length < 10) return res.status(400).json({ error: 'Invalid number' });
 
   const sessionId = makeId();
 
-  try {
-    const code = await startPairing(cleaned, sessionId);
-    return res.json({ sessionId, code });
-  } catch (e) {
-    console.error('[/pair] Error:', e.message);
-    sessions.delete(sessionId);
-    return res.status(500).json({ error: 'Could not generate pairing code. Try again.' });
-  }
+  // Store session immediately
+  sessions.set(sessionId, {
+    sock     : null,
+    status   : 'connecting',
+    code     : null,
+    sessionStr: null,
+    number   : cleaned,
+  });
+
+  // Start pairing in background — don't await
+  runPairing(cleaned, sessionId);
+
+  // Return sessionId immediately — frontend will poll /status
+  return res.json({ sessionId, status: 'connecting' });
 });
 
 // ── GET /status/:sessionId ───────────────────────────────────────
 app.get('/status/:sessionId', (req, res) => {
   const s = sessions.get(req.params.sessionId);
-  if (!s) return res.status(404).json({ error: 'Session not found or expired' });
+  if (!s) return res.status(404).json({ error: 'Session not found' });
 
   if (s.status === 'connected' && s.sessionStr) {
     setTimeout(() => {
@@ -256,14 +229,13 @@ app.get('/status/:sessionId', (req, res) => {
     return res.json({ status: 'connected', sessionId: s.sessionStr });
   }
 
-  return res.json({ status: s.status, code: s.code });
+  return res.json({ status: s.status, code: s.code || null });
 });
 
 // ── Health ────────────────────────────────────────────────────────
 app.get('/health', (_, res) => res.json({
   status  : 'ok',
   bot     : 'YOUSAF-MD-PAIRING',
-  author  : 'MR YOUSAF BALOCH',
   sessions: sessions.size,
 }));
 
@@ -274,11 +246,5 @@ app.get('*', (_, res) => {
 
 // ── Start ────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`
-╔══════════════════════════════════════════╗
-║   🚀 YOUSAF-MD-PAIRING is running!       ║
-║   🌐 Port: ${PORT}                           ║
-║   👑 By: MR YOUSAF BALOCH               ║
-╚══════════════════════════════════════════╝
-  `);
+  console.log(`🚀 YOUSAF-MD-PAIRING running on port ${PORT}`);
 });
