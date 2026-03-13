@@ -16,6 +16,7 @@ import {
   makeCacheableSignalKeyStore,
   Browsers,
   fetchLatestBaileysVersion,
+  DisconnectReason,
 } from '@whiskeysockets/baileys';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -72,8 +73,8 @@ function runPairing(cleaned, sessionId) {
     try {
       if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
-      const { state, saveCreds }    = await useMultiFileAuthState(sessionDir);
-      const { version, isLatest }   = await fetchLatestBaileysVersion();
+      const { state, saveCreds }  = await useMultiFileAuthState(sessionDir);
+      const { version, isLatest } = await fetchLatestBaileysVersion();
       console.log(`[${sessionId}] WA version: ${version.join('.')} | latest: ${isLatest}`);
 
       const sock = makeWASocket({
@@ -86,8 +87,9 @@ function runPairing(cleaned, sessionId) {
         logger,
         browser             : Browsers.ubuntu('Chrome'),
         connectTimeoutMs    : 60000,
-        keepAliveIntervalMs : 10000,
+        keepAliveIntervalMs : 5000,
         markOnlineOnConnect : false,
+        retryRequestDelayMs : 2000,
       });
 
       const s = sessions.get(sessionId);
@@ -97,6 +99,22 @@ function runPairing(cleaned, sessionId) {
 
       let codeRequested = false;
 
+      // ── Keep socket alive with ping ──────────────────────────
+      // Socket کو زندہ رکھنے کے لیے
+      const keepAlive = setInterval(() => {
+        const s = sessions.get(sessionId);
+        if (!s || s.status === 'connected' || s.status === 'failed') {
+          clearInterval(keepAlive);
+          return;
+        }
+        // socket alive check
+        try {
+          if (sock.ws?.readyState === 1) {
+            console.log(`[${sessionId}] Socket alive ✅`);
+          }
+        } catch (_) {}
+      }, 10000);
+
       sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr } = update;
         const s = sessions.get(sessionId);
@@ -104,7 +122,7 @@ function runPairing(cleaned, sessionId) {
 
         console.log(`[${sessionId}] connection: ${connection} | qr: ${!!qr}`);
 
-        // QR آنے کا مطلب socket WA servers سے connect ہو گیا
+        // QR آنے کا مطلب WA سے connect ہو گیا — pairing code مانگو
         if (qr && !codeRequested) {
           codeRequested = true;
           console.log(`[${sessionId}] QR ready — requesting pairing code...`);
@@ -117,12 +135,14 @@ function runPairing(cleaned, sessionId) {
           } catch (err) {
             console.error(`[${sessionId}] Code error:`, err.message);
             s.status = 'failed';
+            clearInterval(keepAlive);
             try { sock.end(); } catch (_) {}
           }
         }
 
-        // User نے code enter کر دیا
+        // ── User نے code enter کیا — connection open ─────────
         if (connection === 'open') {
+          clearInterval(keepAlive);
           console.log(`[${sessionId}] ✅ WhatsApp Connected!`);
           await saveCreds();
 
@@ -171,16 +191,116 @@ function runPairing(cleaned, sessionId) {
           setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
         }
 
-        // Connection بند ہوئی
+        // ── Connection close ─────────────────────────────────
         if (connection === 'close') {
-          const code = lastDisconnect?.error?.output?.statusCode;
-          console.log(`[${sessionId}] Closed. code: ${code} | status: ${s.status}`);
-          if (s.status === 'connected') return;
-          if (s.status === 'code_ready') {
-            console.log(`[${sessionId}] Waiting for user to enter code...`);
+          const errCode = lastDisconnect?.error?.output?.statusCode;
+          console.log(`[${sessionId}] Closed. errCode: ${errCode} | status: ${s.status}`);
+
+          // Already connected — normal close, ignore
+          if (s.status === 'connected') {
+            clearInterval(keepAlive);
             return;
           }
+
+          // User ابھی code enter کر رہا ہے — reconnect کرو
+          if (s.status === 'code_ready') {
+            console.log(`[${sessionId}] Code shown — reconnecting to keep session alive...`);
+
+            // Reconnect صرف اگر loggedOut نہیں
+            if (errCode !== DisconnectReason.loggedOut) {
+              try {
+                // نئی connection بناؤ same session کے ساتھ
+                const { state: newState, saveCreds: newSaveCreds } =
+                  await useMultiFileAuthState(sessionDir);
+
+                const newSock = makeWASocket({
+                  version,
+                  auth: {
+                    creds: newState.creds,
+                    keys : makeCacheableSignalKeyStore(newState.keys, logger),
+                  },
+                  printQRInTerminal   : false,
+                  logger,
+                  browser             : Browsers.ubuntu('Chrome'),
+                  connectTimeoutMs    : 60000,
+                  keepAliveIntervalMs : 5000,
+                  markOnlineOnConnect : false,
+                });
+
+                s.sock = newSock;
+                newSock.ev.on('creds.update', newSaveCreds);
+
+                newSock.ev.on('connection.update', async (u2) => {
+                  const { connection: c2 } = u2;
+                  console.log(`[${sessionId}] reconnect connection: ${c2}`);
+
+                  if (c2 === 'open') {
+                    clearInterval(keepAlive);
+                    console.log(`[${sessionId}] ✅ Reconnected after code entry!`);
+                    await newSaveCreds();
+
+                    try {
+                      await new Promise(r => setTimeout(r, 1500));
+                      const creds   = fs.readFileSync(`${sessionDir}/creds.json`, 'utf8');
+                      const encoded = Buffer.from(creds).toString('base64');
+                      const fullId  = `YOUSAF-MD_${encoded}`;
+
+                      s.sessionStr = fullId;
+                      s.status     = 'connected';
+
+                      const jid = `${cleaned}@s.whatsapp.net`;
+
+                      try {
+                        const thumb = path.resolve('./assets/bot-thumb.png');
+                        if (fs.existsSync(thumb)) {
+                          await newSock.sendMessage(jid, {
+                            image  : fs.readFileSync(thumb),
+                            caption: buildWelcomeText(),
+                          });
+                        } else {
+                          await newSock.sendMessage(jid, { text: buildWelcomeText() });
+                        }
+                      } catch (e) {
+                        console.error(`[${sessionId}] Welcome error:`, e.message);
+                      }
+
+                      await new Promise(r => setTimeout(r, 2000));
+
+                      try {
+                        await newSock.sendMessage(jid, { text: buildSessionText(fullId) });
+                      } catch (e) {
+                        console.error(`[${sessionId}] Session msg error:`, e.message);
+                      }
+
+                      console.log(`[${sessionId}] ✅ Messages sent after reconnect!`);
+
+                    } catch (e) {
+                      s.status = 'error';
+                      console.error(`[${sessionId}] reconnect creds error:`, e.message);
+                    }
+
+                    setTimeout(() => { try { newSock.end(); } catch (_) {} }, 5000);
+                  }
+
+                  if (c2 === 'close') {
+                    console.log(`[${sessionId}] Reconnect also closed`);
+                    if (s.status !== 'connected') s.status = 'failed';
+                    clearInterval(keepAlive);
+                  }
+                });
+
+              } catch (reconnErr) {
+                console.error(`[${sessionId}] Reconnect error:`, reconnErr.message);
+                s.status = 'failed';
+                clearInterval(keepAlive);
+              }
+            }
+            return;
+          }
+
+          // کوئی اور case — failed
           s.status = 'failed';
+          clearInterval(keepAlive);
         }
       });
 
@@ -238,12 +358,10 @@ app.get('/health', (_, res) => res.json({
   sessions: sessions.size,
 }));
 
-// ── Frontend ──────────────────────────────────────────────────────
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ── Start ────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 YOUSAF-MD-PAIRING running on port ${PORT}`);
 });
