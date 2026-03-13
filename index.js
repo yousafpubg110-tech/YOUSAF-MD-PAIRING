@@ -5,16 +5,17 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 import 'dotenv/config';
-import express           from 'express';
-import path              from 'path';
-import fs                from 'fs';
-import { fileURLToPath } from 'url';
-import pino              from 'pino';
+import express              from 'express';
+import path                 from 'path';
+import fs                   from 'fs';
+import { fileURLToPath }    from 'url';
+import pino                 from 'pino';
 import {
   makeWASocket,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
   Browsers,
+  fetchLatestBaileysVersion,
 } from '@whiskeysockets/baileys';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -71,9 +72,12 @@ function runPairing(cleaned, sessionId) {
     try {
       if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
-      const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+      const { state, saveCreds }    = await useMultiFileAuthState(sessionDir);
+      const { version, isLatest }   = await fetchLatestBaileysVersion();
+      console.log(`[${sessionId}] WA version: ${version.join('.')} | latest: ${isLatest}`);
 
       const sock = makeWASocket({
+        version,
         auth: {
           creds: state.creds,
           keys : makeCacheableSignalKeyStore(state.keys, logger),
@@ -103,7 +107,7 @@ function runPairing(cleaned, sessionId) {
         // QR آنے کا مطلب socket WA servers سے connect ہو گیا
         if (qr && !codeRequested) {
           codeRequested = true;
-          console.log(`[${sessionId}] Requesting pairing code...`);
+          console.log(`[${sessionId}] QR ready — requesting pairing code...`);
           try {
             const code      = await sock.requestPairingCode(cleaned);
             const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
@@ -133,6 +137,7 @@ function runPairing(cleaned, sessionId) {
 
             const jid = `${cleaned}@s.whatsapp.net`;
 
+            // Message 1 — welcome
             try {
               const thumb = path.resolve('./assets/bot-thumb.png');
               if (fs.existsSync(thumb)) {
@@ -149,6 +154,7 @@ function runPairing(cleaned, sessionId) {
 
             await new Promise(r => setTimeout(r, 2000));
 
+            // Message 2 — SESSION_ID
             try {
               await sock.sendMessage(jid, { text: buildSessionText(fullId) });
             } catch (e) {
@@ -165,11 +171,15 @@ function runPairing(cleaned, sessionId) {
           setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
         }
 
+        // Connection بند ہوئی
         if (connection === 'close') {
           const code = lastDisconnect?.error?.output?.statusCode;
           console.log(`[${sessionId}] Closed. code: ${code} | status: ${s.status}`);
           if (s.status === 'connected') return;
-          if (s.status === 'code_ready') return; // user ابھی code enter کر رہا ہے
+          if (s.status === 'code_ready') {
+            console.log(`[${sessionId}] Waiting for user to enter code...`);
+            return;
+          }
           s.status = 'failed';
         }
       });
@@ -228,10 +238,12 @@ app.get('/health', (_, res) => res.json({
   sessions: sessions.size,
 }));
 
+// ── Frontend ──────────────────────────────────────────────────────
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// ── Start ────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 YOUSAF-MD-PAIRING running on port ${PORT}`);
 });
