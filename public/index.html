@@ -23,10 +23,9 @@
     animation:gradientMove 4s ease infinite;
     text-align:center;
     padding:18px;
-    font-size:22px;
+    font-size:20px;
     font-weight:900;
     letter-spacing:2px;
-    text-shadow:0 0 20px rgba(0,0,0,0.5);
   }
   @keyframes gradientMove{
     0%{background-position:0% 50%}
@@ -35,7 +34,6 @@
   }
   .container{max-width:480px;margin:0 auto;padding:20px}
 
-  /* Clock */
   .clock-box{
     background:rgba(0,0,0,0.6);
     border:1px solid rgba(0,255,247,0.2);
@@ -46,82 +44,19 @@
   }
   .clock{font-size:48px;font-weight:900;color:#00fff7;letter-spacing:6px;font-family:monospace}
   .clock-labels{display:flex;justify-content:center;gap:52px;color:#888;font-size:11px;letter-spacing:2px;margin-top:4px}
-  .day-badge{
-    display:inline-block;
-    background:#7c3aed;
-    color:#fff;
-    padding:4px 16px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:700;
-    margin-top:10px;
-  }
+  .day-badge{display:inline-block;background:#7c3aed;color:#fff;padding:4px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-top:10px}
 
-  /* Pairing code card */
-  .code-card{
-    background:rgba(13,2,33,0.9);
-    border:2px dashed #7c3aed;
-    border-radius:16px;
-    padding:24px;
-    text-align:center;
-    margin-bottom:20px;
-    display:none;
-  }
-  .code-card.show{display:block}
-  .code-label{color:#ffd700;font-size:13px;letter-spacing:3px;font-weight:700;margin-bottom:14px}
-  .code-digits{font-size:42px;font-weight:900;letter-spacing:6px;font-family:monospace;color:#fff;margin-bottom:16px}
-  .code-hint{color:#aaa;font-size:13px;line-height:1.8}
-  .code-hint b{color:#fff}
-  .code-error{color:#ff4444;font-size:13px;margin-top:10px}
-
-  /* Connecting status */
-  .status-box{
-    background:rgba(0,255,247,0.05);
-    border:1px solid rgba(0,255,247,0.2);
-    border-radius:12px;
-    padding:16px;
-    text-align:center;
-    margin-bottom:20px;
-    display:none;
-  }
+  .status-box{background:rgba(0,255,247,0.05);border:1px solid rgba(0,255,247,0.2);border-radius:12px;padding:16px;text-align:center;margin-bottom:20px;display:none}
   .status-box.show{display:block}
-  .spinner{
-    width:30px;height:30px;
-    border:3px solid rgba(0,255,247,0.2);
-    border-top:3px solid #00fff7;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    margin:0 auto 10px;
-  }
+  .spinner{width:30px;height:30px;border:3px solid rgba(0,255,247,0.2);border-top:3px solid #00fff7;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* Session result card */
-  .session-card{
-    background:rgba(0,200,100,0.05);
-    border:2px solid #00c851;
-    border-radius:16px;
-    padding:24px;
-    text-align:center;
-    margin-bottom:20px;
-    display:none;
-  }
-  .session-card.show{display:block}
-  .session-title{color:#00c851;font-size:14px;letter-spacing:2px;font-weight:700;margin-bottom:12px}
-  .session-id{
-    background:rgba(0,0,0,0.4);
-    border:1px solid #333;
-    border-radius:8px;
-    padding:12px;
-    font-size:11px;
-    word-break:break-all;
-    color:#ccc;
-    text-align:left;
-    max-height:100px;
-    overflow-y:auto;
-    margin-bottom:12px;
-  }
-  .copy-btn{
-    background:linear-gradient(135deg,#00c851,#00fff7);
+  .code-card{background:rgba(13,2,33,0.9);border:2px dashed #7c3aed;border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;display:none}
+  .code-card.show{display:block}
+  .code-label{color:#ffd700;font-size:13px;letter-spacing:3px;font-weight:700;margin-bottom:14px}
+  .code-digits{font-size:42px;font-weight:900;letter-spacing:6px;font-family:monospace;color:#fff;margin-bottom:12px}
+  .copy-code-btn{
+    background:linear-gradient(135deg,#7c3aed,#00fff7);
     color:#000;
     border:none;
     padding:10px 28px;
@@ -130,88 +65,42 @@
     font-size:14px;
     cursor:pointer;
     letter-spacing:1px;
+    margin-bottom:14px;
+    width:100%;
   }
+  .copy-code-btn:active{opacity:0.8}
+  .code-hint{color:#aaa;font-size:13px;line-height:1.8}
+  .code-hint b{color:#fff}
+  .code-error{color:#ff4444;font-size:13px;margin-top:10px}
+
+  .session-card{background:rgba(0,200,100,0.05);border:2px solid #00c851;border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;display:none}
+  .session-card.show{display:block}
+  .session-title{color:#00c851;font-size:14px;letter-spacing:2px;font-weight:700;margin-bottom:12px}
+  .session-id{background:rgba(0,0,0,0.4);border:1px solid #333;border-radius:8px;padding:12px;font-size:11px;word-break:break-all;color:#ccc;text-align:left;max-height:100px;overflow-y:auto;margin-bottom:12px}
+  .copy-btn{background:linear-gradient(135deg,#00c851,#00fff7);color:#000;border:none;padding:10px 28px;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;letter-spacing:1px;width:100%}
   .copy-btn:active{opacity:0.8}
 
-  /* Form */
-  .form-card{
-    background:rgba(0,0,0,0.5);
-    border:1px solid rgba(157,0,255,0.3);
-    border-radius:16px;
-    padding:24px;
-    margin-bottom:20px;
-  }
+  .form-card{background:rgba(0,0,0,0.5);border:1px solid rgba(157,0,255,0.3);border-radius:16px;padding:24px;margin-bottom:20px}
   .form-icon{font-size:32px;margin-bottom:8px}
   .form-title{color:#7c3aed;font-size:20px;font-weight:700;margin-bottom:6px}
   .form-sub{color:#888;font-size:13px;margin-bottom:20px}
   .input-label{color:#00fff7;font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:8px;display:block}
-  .phone-input{
-    width:100%;
-    background:rgba(0,0,0,0.6);
-    border:1px solid rgba(0,255,247,0.3);
-    border-radius:10px;
-    padding:14px 16px;
-    color:#fff;
-    font-size:16px;
-    outline:none;
-    margin-bottom:6px;
-  }
+  .phone-input{width:100%;background:rgba(0,0,0,0.6);border:1px solid rgba(0,255,247,0.3);border-radius:10px;padding:14px 16px;color:#fff;font-size:16px;outline:none;margin-bottom:6px}
   .phone-input::placeholder{color:#555}
   .phone-hint{color:#555;font-size:11px;margin-bottom:16px}
-  .generate-btn{
-    width:100%;
-    background:linear-gradient(135deg,#22c55e,#ffd700);
-    color:#000;
-    border:none;
-    padding:16px;
-    border-radius:12px;
-    font-size:16px;
-    font-weight:900;
-    cursor:pointer;
-    letter-spacing:2px;
-    transition:opacity 0.2s;
-  }
+  .generate-btn{width:100%;background:linear-gradient(135deg,#22c55e,#ffd700);color:#000;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:2px;transition:opacity 0.2s}
   .generate-btn:disabled{opacity:0.5;cursor:not-allowed}
   .generate-btn:not(:disabled):active{opacity:0.85}
 
-  /* Steps */
-  .steps-card{
-    background:rgba(0,0,0,0.3);
-    border:1px solid rgba(255,107,53,0.2);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:20px;
-  }
+  .steps-card{background:rgba(0,0,0,0.3);border:1px solid rgba(255,107,53,0.2);border-radius:16px;padding:20px;margin-bottom:20px}
   .steps-title{color:#ff6b35;font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:16px;text-align:center}
   .step{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
-  .step-num{
-    background:#7c3aed;
-    color:#fff;
-    width:28px;height:28px;
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:13px;flex-shrink:0;
-  }
+  .step-num{background:#7c3aed;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
   .step-text{color:#ccc;font-size:13px;line-height:1.6;padding-top:4px}
 
-  /* Social */
   .social-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-  .social-btn{
-    display:block;
-    text-decoration:none;
-    background:rgba(0,0,0,0.5);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:10px;
-    padding:12px;
-    text-align:center;
-    color:#fff;
-    font-size:12px;
-    font-weight:600;
-    transition:border-color 0.2s;
-  }
-  .social-btn:hover{border-color:rgba(0,255,247,0.4)}
+  .social-btn{display:block;text-decoration:none;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;text-align:center;color:#fff;font-size:12px;font-weight:600}
   .social-icon{font-size:20px;display:block;margin-bottom:4px}
-
   .footer{text-align:center;color:#444;font-size:12px;padding-bottom:30px}
   .footer span{color:#666}
 </style>
@@ -222,23 +111,21 @@
 
 <div class="container">
 
-  <!-- Clock -->
   <div class="clock-box">
     <div class="clock" id="clock">00:00:00</div>
     <div class="clock-labels"><span>HOUR</span><span>MIN</span><span>SEC</span></div>
     <div class="day-badge" id="dayBadge">---</div>
   </div>
 
-  <!-- Connecting status -->
   <div class="status-box" id="statusBox">
     <div class="spinner"></div>
     <div id="statusText" style="color:#00fff7;font-size:14px">Connecting to WhatsApp...</div>
   </div>
 
-  <!-- Pairing code card -->
   <div class="code-card" id="codeCard">
     <div class="code-label">⚡ YOUR PAIRING CODE ⚡</div>
     <div class="code-digits" id="codeDigits">---- ----</div>
+    <button class="copy-code-btn" id="copyCodeBtn" onclick="copyCode()">📋 COPY PAIRING CODE</button>
     <div class="code-hint">
       Open WhatsApp → <b>Settings</b> → <b>Linked Devices</b><br/>
       → <b>Link a Device</b> → <b>Link with Phone Number</b><br/>
@@ -247,61 +134,37 @@
     <div class="code-error" id="codeError"></div>
   </div>
 
-  <!-- Session card -->
   <div class="session-card" id="sessionCard">
     <div class="session-title">✅ SESSION ID GENERATED!</div>
     <div class="session-id" id="sessionIdBox"></div>
-    <button class="copy-btn" onclick="copySession()">📋 COPY SESSION ID</button>
+    <button class="copy-btn" id="copySessionBtn" onclick="copySession()">📋 COPY SESSION ID</button>
   </div>
 
-  <!-- Form -->
   <div class="form-card" id="formCard">
     <div class="form-icon">🔑</div>
     <div class="form-title">Pairing Code Generator</div>
     <div class="form-sub">Enter your WhatsApp number to get your 8-digit pairing code</div>
     <label class="input-label">📱 WHATSAPP NUMBER</label>
     <input class="phone-input" id="phoneInput" type="tel" placeholder="923001234567" maxlength="15"/>
-    <div class="phone-hint">Country code — no + or spaces &nbsp; (e.g. 923001234567)</div>
+    <div class="phone-hint">Country code — no + or spaces &nbsp;(e.g. 923001234567)</div>
     <button class="generate-btn" id="generateBtn" onclick="generateCode()">
       🔑 &nbsp; GENERATE PAIRING CODE
     </button>
   </div>
 
-  <!-- Steps -->
   <div class="steps-card">
     <div class="steps-title">ℹ️ &nbsp; HOW TO USE THIS CODE</div>
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">Open WhatsApp → Settings → Linked Devices</div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">Tap "Link a Device" → "Link with Phone Number"</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">Enter the 8-digit pairing code shown above</div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-text">Your SESSION ID will arrive in your WhatsApp inbox 🚀</div>
-    </div>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Open WhatsApp → Settings → Linked Devices</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Tap "Link a Device" → "Link with Phone Number"</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Enter the 8-digit pairing code shown above</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Your SESSION ID will arrive in your WhatsApp inbox 🚀</div></div>
   </div>
 
-  <!-- Social -->
   <div class="social-grid">
-    <a class="social-btn" href="https://youtube.com/@Yousaf_Baloch_Tech" target="_blank">
-      <span class="social-icon">📺</span>YouTube
-    </a>
-    <a class="social-btn" href="https://tiktok.com/@loser_boy.110" target="_blank">
-      <span class="social-icon">🎵</span>TikTok
-    </a>
-    <a class="social-btn" href="https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j" target="_blank">
-      <span class="social-icon">📢</span>Channel
-    </a>
-    <a class="social-btn" href="https://github.com/yousafpubg110-tech/YOUSAF-MD" target="_blank">
-      <span class="social-icon">💻</span>GitHub
-    </a>
+    <a class="social-btn" href="https://youtube.com/@Yousaf_Baloch_Tech" target="_blank"><span class="social-icon">📺</span>YouTube</a>
+    <a class="social-btn" href="https://tiktok.com/@loser_boy.110" target="_blank"><span class="social-icon">🎵</span>TikTok</a>
+    <a class="social-btn" href="https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j" target="_blank"><span class="social-icon">📢</span>Channel</a>
+    <a class="social-btn" href="https://github.com/yousafpubg110-tech/YOUSAF-MD" target="_blank"><span class="social-icon">💻</span>GitHub</a>
   </div>
 
   <div class="footer">
@@ -312,43 +175,37 @@
 </div>
 
 <script>
-// ── Clock ──────────────────────────────────────────────────────
 const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 function updateClock() {
   const now = new Date();
-  const h   = String(now.getHours()).padStart(2,'0');
-  const m   = String(now.getMinutes()).padStart(2,'0');
-  const s   = String(now.getSeconds()).padStart(2,'0');
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
   document.getElementById('clock').textContent    = `${h}:${m}:${s}`;
   document.getElementById('dayBadge').textContent = days[now.getDay()];
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ── State ──────────────────────────────────────────────────────
-let pollInterval = null;
+let pollInterval     = null;
 let currentSessionId = null;
-let sessionData = null;
+let currentCode      = null;
+let sessionData      = null;
 
-// ── Generate ───────────────────────────────────────────────────
 async function generateCode() {
   const number = document.getElementById('phoneInput').value.trim();
-  if (!number || number.length < 10) {
-    alert('Please enter a valid WhatsApp number');
-    return;
-  }
+  if (!number || number.length < 10) { alert('Please enter a valid WhatsApp number'); return; }
 
   const btn = document.getElementById('generateBtn');
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = '⏳  Connecting...';
 
-  // Reset UI
   hide('codeCard');
   hide('sessionCard');
-  document.getElementById('codeError').textContent = '';
+  document.getElementById('codeError').textContent  = '';
   document.getElementById('codeDigits').textContent = '---- ----';
+  currentCode = null;
 
-  // Show connecting
   show('statusBox');
   document.getElementById('statusText').textContent = 'Connecting to WhatsApp...';
 
@@ -359,17 +216,10 @@ async function generateCode() {
       body   : JSON.stringify({ number }),
     });
     const data = await res.json();
-
-    if (!data.sessionId) {
-      throw new Error(data.error || 'Failed to start pairing');
-    }
-
+    if (!data.sessionId) throw new Error(data.error || 'Failed');
     currentSessionId = data.sessionId;
-
-    // Start polling for code
     document.getElementById('statusText').textContent = 'Waiting for pairing code...';
     startPolling();
-
   } catch (e) {
     hide('statusBox');
     showError(e.message);
@@ -377,15 +227,13 @@ async function generateCode() {
   }
 }
 
-// ── Poll /status ───────────────────────────────────────────────
 function startPolling() {
   if (pollInterval) clearInterval(pollInterval);
   let tries = 0;
-  const MAX = 60; // 60 * 2s = 2 minutes max
 
   pollInterval = setInterval(async () => {
     tries++;
-    if (tries > MAX) {
+    if (tries > 90) {
       clearInterval(pollInterval);
       hide('statusBox');
       showError('Timeout. Please try again.');
@@ -395,16 +243,17 @@ function startPolling() {
 
     try {
       const res  = await fetch(`/status/${currentSessionId}`);
+      if (res.status === 304) return; // no change
       const data = await res.json();
-
-      console.log('Poll:', data);
+      console.log('Poll:', data.status, data.code);
 
       if (data.status === 'code_ready' && data.code) {
-        // Show pairing code
         hide('statusBox');
+        currentCode = data.code;
         document.getElementById('codeDigits').textContent = data.code;
         document.getElementById('codeError').textContent  = '';
         show('codeCard');
+        // Keep polling for connection
         document.getElementById('statusText').textContent = 'Waiting for WhatsApp connection...';
         show('statusBox');
       }
@@ -412,7 +261,6 @@ function startPolling() {
       if (data.status === 'connected' && data.sessionId) {
         clearInterval(pollInterval);
         hide('statusBox');
-        show('codeCard');
         sessionData = data.sessionId;
         document.getElementById('sessionIdBox').textContent = data.sessionId;
         show('sessionCard');
@@ -425,30 +273,35 @@ function startPolling() {
         showError('Pairing failed. Please try again.');
         resetBtn();
       }
-
-    } catch (e) {
-      console.error('Poll error:', e);
-    }
+    } catch (e) { console.error('Poll error:', e); }
   }, 2000);
 }
 
-// ── Copy session ───────────────────────────────────────────────
+function copyCode() {
+  if (!currentCode) return;
+  const plain = currentCode.replace(/-/g, '');
+  navigator.clipboard.writeText(plain).then(() => {
+    const btn = document.getElementById('copyCodeBtn');
+    btn.textContent = '✅ COPIED!';
+    setTimeout(() => { btn.textContent = '📋 COPY PAIRING CODE'; }, 2000);
+  });
+}
+
 function copySession() {
   if (!sessionData) return;
   navigator.clipboard.writeText(sessionData).then(() => {
-    const btn = document.querySelector('.copy-btn');
+    const btn = document.getElementById('copySessionBtn');
     btn.textContent = '✅ COPIED!';
     setTimeout(() => { btn.textContent = '📋 COPY SESSION ID'; }, 2000);
   });
 }
 
-// ── Helpers ────────────────────────────────────────────────────
 function show(id) { document.getElementById(id).classList.add('show'); }
 function hide(id) { document.getElementById(id).classList.remove('show'); }
 
 function showError(msg) {
   show('codeCard');
-  document.getElementById('codeError').textContent = '❌ ' + msg;
+  document.getElementById('codeError').textContent  = '❌ ' + msg;
   document.getElementById('codeDigits').textContent = '---- ----';
 }
 
