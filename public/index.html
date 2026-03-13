@@ -2,533 +2,460 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>YOUSAF-MD — Official Pairing Gateway</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>YOUSAF-MD PAIRING</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:#0d0221;
+    color:#fff;
+    font-family:'Segoe UI',sans-serif;
+    min-height:100vh;
+    background-image:
+      linear-gradient(rgba(0,255,247,0.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,255,247,0.03) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .banner{
+    width:100%;
+    background:linear-gradient(135deg,#ff6b35,#ffd700,#ff00aa,#9d00ff,#00fff7);
+    background-size:300% 300%;
+    animation:gradientMove 4s ease infinite;
+    text-align:center;
+    padding:18px;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-shadow:0 0 20px rgba(0,0,0,0.5);
+  }
+  @keyframes gradientMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+  .container{max-width:480px;margin:0 auto;padding:20px}
 
-body{
-  min-height:100vh;
-  background:#050d15;
-  font-family:'Segoe UI',sans-serif;
-  color:#fff;
-  overflow-x:hidden;
-}
+  /* Clock */
+  .clock-box{
+    background:rgba(0,0,0,0.6);
+    border:1px solid rgba(0,255,247,0.2);
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .clock{font-size:48px;font-weight:900;color:#00fff7;letter-spacing:6px;font-family:monospace}
+  .clock-labels{display:flex;justify-content:center;gap:52px;color:#888;font-size:11px;letter-spacing:2px;margin-top:4px}
+  .day-badge{
+    display:inline-block;
+    background:#7c3aed;
+    color:#fff;
+    padding:4px 16px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:700;
+    margin-top:10px;
+  }
 
-/* Grid background */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,255,200,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,200,0.04) 1px,transparent 1px);
-  background-size:40px 40px;
-  pointer-events:none;z-index:0;
-}
+  /* Pairing code card */
+  .code-card{
+    background:rgba(13,2,33,0.9);
+    border:2px dashed #7c3aed;
+    border-radius:16px;
+    padding:24px;
+    text-align:center;
+    margin-bottom:20px;
+    display:none;
+  }
+  .code-card.show{display:block}
+  .code-label{color:#ffd700;font-size:13px;letter-spacing:3px;font-weight:700;margin-bottom:14px}
+  .code-digits{font-size:42px;font-weight:900;letter-spacing:6px;font-family:monospace;color:#fff;margin-bottom:16px}
+  .code-hint{color:#aaa;font-size:13px;line-height:1.8}
+  .code-hint b{color:#fff}
+  .code-error{color:#ff4444;font-size:13px;margin-top:10px}
 
-/* Floating dots */
-body::after{
-  content:'';
-  position:fixed;inset:0;
-  background-image:radial-gradient(circle,rgba(0,255,200,0.15) 1px,transparent 1px);
-  background-size:80px 80px;
-  pointer-events:none;z-index:0;
-  animation:moveDots 20s linear infinite;
-}
-@keyframes moveDots{0%{background-position:0 0;}100%{background-position:80px 80px;}}
+  /* Connecting status */
+  .status-box{
+    background:rgba(0,255,247,0.05);
+    border:1px solid rgba(0,255,247,0.2);
+    border-radius:12px;
+    padding:16px;
+    text-align:center;
+    margin-bottom:20px;
+    display:none;
+  }
+  .status-box.show{display:block}
+  .spinner{
+    width:30px;height:30px;
+    border:3px solid rgba(0,255,247,0.2);
+    border-top:3px solid #00fff7;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 10px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:24px 16px 60px;}
+  /* Session result card */
+  .session-card{
+    background:rgba(0,200,100,0.05);
+    border:2px solid #00c851;
+    border-radius:16px;
+    padding:24px;
+    text-align:center;
+    margin-bottom:20px;
+    display:none;
+  }
+  .session-card.show{display:block}
+  .session-title{color:#00c851;font-size:14px;letter-spacing:2px;font-weight:700;margin-bottom:12px}
+  .session-id{
+    background:rgba(0,0,0,0.4);
+    border:1px solid #333;
+    border-radius:8px;
+    padding:12px;
+    font-size:11px;
+    word-break:break-all;
+    color:#ccc;
+    text-align:left;
+    max-height:100px;
+    overflow-y:auto;
+    margin-bottom:12px;
+  }
+  .copy-btn{
+    background:linear-gradient(135deg,#00c851,#00fff7);
+    color:#000;
+    border:none;
+    padding:10px 28px;
+    border-radius:8px;
+    font-weight:800;
+    font-size:14px;
+    cursor:pointer;
+    letter-spacing:1px;
+  }
+  .copy-btn:active{opacity:0.8}
 
-/* Top badge */
-.gateway-badge{
-  border:1.5px solid #00ffc8;
-  border-radius:40px;
-  padding:10px 24px;
-  text-align:center;
-  font-size:13px;
-  letter-spacing:3px;
-  color:#00ffc8;
-  margin-bottom:28px;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  animation:glowBorder 2s ease-in-out infinite alternate;
-}
-@keyframes glowBorder{
-  from{box-shadow:0 0 8px rgba(0,255,200,0.3);}
-  to{box-shadow:0 0 20px rgba(0,255,200,0.7),inset 0 0 8px rgba(0,255,200,0.1);}
-}
+  /* Form */
+  .form-card{
+    background:rgba(0,0,0,0.5);
+    border:1px solid rgba(157,0,255,0.3);
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:20px;
+  }
+  .form-icon{font-size:32px;margin-bottom:8px}
+  .form-title{color:#7c3aed;font-size:20px;font-weight:700;margin-bottom:6px}
+  .form-sub{color:#888;font-size:13px;margin-bottom:20px}
+  .input-label{color:#00fff7;font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:8px;display:block}
+  .phone-input{
+    width:100%;
+    background:rgba(0,0,0,0.6);
+    border:1px solid rgba(0,255,247,0.3);
+    border-radius:10px;
+    padding:14px 16px;
+    color:#fff;
+    font-size:16px;
+    outline:none;
+    margin-bottom:6px;
+  }
+  .phone-input::placeholder{color:#555}
+  .phone-hint{color:#555;font-size:11px;margin-bottom:16px}
+  .generate-btn{
+    width:100%;
+    background:linear-gradient(135deg,#22c55e,#ffd700);
+    color:#000;
+    border:none;
+    padding:16px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:900;
+    cursor:pointer;
+    letter-spacing:2px;
+    transition:opacity 0.2s;
+  }
+  .generate-btn:disabled{opacity:0.5;cursor:not-allowed}
+  .generate-btn:not(:disabled):active{opacity:0.85}
 
-/* Main title */
-.main-title{
-  font-size:38px;font-weight:900;
-  text-align:center;
-  background:linear-gradient(90deg,#ffe600,#ff8c00,#ff3c00);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  letter-spacing:3px;
-  margin-bottom:8px;
-  text-shadow:none;
-  animation:titlePulse 3s ease-in-out infinite;
-}
-@keyframes titlePulse{
-  0%,100%{filter:brightness(1);}
-  50%{filter:brightness(1.3);}
-}
+  /* Steps */
+  .steps-card{
+    background:rgba(0,0,0,0.3);
+    border:1px solid rgba(255,107,53,0.2);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .steps-title{color:#ff6b35;font-size:12px;letter-spacing:2px;font-weight:700;margin-bottom:16px;text-align:center}
+  .step{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .step-num{
+    background:#7c3aed;
+    color:#fff;
+    width:28px;height:28px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;flex-shrink:0;
+  }
+  .step-text{color:#ccc;font-size:13px;line-height:1.6;padding-top:4px}
 
-.sub-title{
-  text-align:center;
-  color:#94a3b8;
-  font-size:12px;
-  letter-spacing:4px;
-  margin-bottom:16px;
-}
+  /* Social */
+  .social-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .social-btn{
+    display:block;
+    text-decoration:none;
+    background:rgba(0,0,0,0.5);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+    color:#fff;
+    font-size:12px;
+    font-weight:600;
+    transition:border-color 0.2s;
+  }
+  .social-btn:hover{border-color:rgba(0,255,247,0.4)}
+  .social-icon{font-size:20px;display:block;margin-bottom:4px}
 
-/* Premium badge */
-.premium-badge{
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(90deg,#f59e0b,#ef4444,#ec4899);
-  border-radius:40px;
-  padding:12px 32px;
-  font-size:15px;font-weight:800;
-  letter-spacing:2px;
-  margin:0 auto 28px;
-  max-width:280px;
-  box-shadow:0 4px 20px rgba(239,68,68,0.4);
-  animation:premiumGlow 2s ease-in-out infinite alternate;
-}
-@keyframes premiumGlow{
-  from{box-shadow:0 4px 20px rgba(239,68,68,0.3);}
-  to{box-shadow:0 4px 40px rgba(239,68,68,0.7);}
-}
-
-/* Clock */
-.clock-wrap{
-  background:rgba(0,0,0,0.6);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:28px;
-  display:flex;align-items:center;justify-content:center;gap:0;
-}
-.clock-part{text-align:center;flex:1;}
-.clock-num{
-  font-size:42px;font-weight:800;
-  color:#00e5ff;
-  font-family:'Courier New',monospace;
-  text-shadow:0 0 20px rgba(0,229,255,0.6);
-}
-.clock-label{font-size:10px;color:#64748b;letter-spacing:2px;margin-top:4px;}
-.clock-dot{font-size:36px;color:#00e5ff;margin:0 4px;padding-bottom:8px;}
-.day-badge{
-  background:linear-gradient(135deg,#7c3aed,#4f46e5);
-  border-radius:20px;padding:8px 16px;
-  font-size:13px;font-weight:700;
-  letter-spacing:2px;margin-left:12px;
-}
-
-/* Cards */
-.card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  padding:28px 24px;
-  margin-bottom:20px;
-}
-
-.card-icon{font-size:32px;margin-bottom:8px;}
-.card-title{
-  font-size:22px;font-weight:800;
-  background:linear-gradient(90deg,#a78bfa,#60a5fa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:6px;
-}
-.card-sub{color:#64748b;font-size:13px;margin-bottom:20px;}
-
-.input-label{
-  font-size:11px;letter-spacing:3px;
-  color:#a78bfa;margin-bottom:8px;
-  display:flex;align-items:center;gap:6px;
-}
-
-.input-wrap{position:relative;}
-.input-wrap .input-icon{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  font-size:18px;
-}
-input[type=tel]{
-  width:100%;
-  background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;
-  padding:14px 16px 14px 44px;
-  color:#fff;font-size:16px;
-  font-family:'Courier New',monospace;
-  outline:none;transition:.2s;
-  letter-spacing:2px;
-}
-input[type=tel]::placeholder{color:#334155;letter-spacing:1px;}
-input[type=tel]:focus{border-color:#a78bfa;background:rgba(124,58,237,0.08);}
-.input-hint{font-size:12px;color:#475569;margin-top:8px;font-style:italic;}
-
-/* Generate button */
-.gen-btn{
-  width:100%;padding:18px;margin-top:16px;
-  background:linear-gradient(90deg,#22c55e,#a3e635,#facc15);
-  border:none;border-radius:12px;
-  color:#000;font-size:16px;font-weight:800;
-  letter-spacing:2px;cursor:pointer;
-  transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  text-transform:uppercase;
-}
-.gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(34,197,94,0.4);}
-.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-
-/* How to use */
-.how-card{
-  background:rgba(0,0,0,0.3);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:12px;padding:20px;margin-top:16px;
-}
-.how-title{
-  font-size:12px;letter-spacing:3px;
-  color:#ec4899;font-weight:700;
-  margin-bottom:16px;
-  display:flex;align-items:center;gap:8px;
-}
-.how-steps{list-style:none;}
-.how-steps li{
-  display:flex;align-items:flex-start;gap:14px;
-  margin-bottom:12px;font-size:13px;color:#94a3b8;line-height:1.5;
-}
-.step-num{
-  background:linear-gradient(135deg,#7c3aed,#4f46e5);
-  border-radius:50%;width:26px;height:26px;min-width:26px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;
-}
-
-/* Code display */
-.code-card{
-  background:rgba(124,58,237,0.1);
-  border:2px dashed rgba(124,58,237,0.5);
-  border-radius:16px;padding:24px;
-  text-align:center;display:none;margin-bottom:20px;
-}
-.code-label-text{font-size:11px;letter-spacing:3px;color:#a78bfa;margin-bottom:12px;}
-.code-digits{
-  font-size:44px;font-weight:900;
-  letter-spacing:10px;
-  font-family:'Courier New',monospace;
-  color:#fff;
-  text-shadow:0 0 30px rgba(167,139,250,0.8);
-  animation:codePulse 1.5s ease-in-out infinite;
-}
-@keyframes codePulse{
-  0%,100%{text-shadow:0 0 20px rgba(167,139,250,0.6);}
-  50%{text-shadow:0 0 40px rgba(167,139,250,1),0 0 60px rgba(167,139,250,0.4);}
-}
-.code-instruction{color:#64748b;font-size:13px;margin-top:12px;line-height:1.6;}
-.wait-status{
-  font-size:13px;color:#f59e0b;margin-top:12px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-
-/* Session result */
-.session-card{
-  background:rgba(16,185,129,0.08);
-  border:1px solid rgba(16,185,129,0.3);
-  border-radius:16px;padding:24px;
-  text-align:center;display:none;margin-bottom:20px;
-}
-.success-big{font-size:52px;margin-bottom:8px;}
-.session-title{
-  font-size:12px;letter-spacing:3px;color:#10b981;
-  margin-bottom:12px;font-weight:700;
-}
-.session-val{
-  font-size:10px;word-break:break-all;
-  color:#d1fae5;background:rgba(0,0,0,0.4);
-  padding:14px;border-radius:8px;
-  font-family:'Courier New',monospace;line-height:1.8;
-  text-align:left;border:1px solid rgba(16,185,129,0.2);
-}
-.copy-btn{
-  margin-top:14px;padding:12px 28px;
-  background:linear-gradient(135deg,#059669,#047857);
-  border:none;border-radius:10px;color:#fff;
-  font-size:14px;font-weight:700;cursor:pointer;
-  letter-spacing:1px;transition:.2s;
-}
-.copy-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(5,150,105,0.4);}
-.copy-msg{font-size:13px;color:#10b981;margin-top:10px;min-height:18px;}
-
-/* General status */
-.status-msg{font-size:13px;margin-top:10px;min-height:18px;text-align:center;}
-.status-msg.err{color:#f87171;}
-.status-msg.ok{color:#10b981;}
-
-/* Spinner */
-.spin{
-  display:inline-block;width:18px;height:18px;
-  border:2px solid rgba(0,0,0,0.3);
-  border-top-color:#000;
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Social cards */
-.social-title{
-  font-size:14px;font-weight:700;letter-spacing:3px;
-  color:#00ffc8;text-align:center;
-  margin-bottom:16px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.social-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px;padding:20px 12px;
-  text-align:center;cursor:pointer;
-  transition:.2s;text-decoration:none;color:#fff;
-  display:block;
-}
-.social-card:hover{
-  background:rgba(255,255,255,0.07);
-  border-color:rgba(255,255,255,0.2);
-  transform:translateY(-2px);
-}
-.social-icon{font-size:32px;margin-bottom:8px;}
-.social-name{font-size:14px;font-weight:700;margin-bottom:4px;}
-.social-handle{font-size:11px;letter-spacing:1px;color:#64748b;}
-
-/* Footer */
-.footer{
-  text-align:center;padding-top:16px;
-  border-top:1px solid rgba(255,255,255,0.06);
-}
-.footer p{font-size:12px;color:#475569;line-height:2;}
-.footer strong{color:#f59e0b;}
-.footer .wa{color:#25d366;}
+  .footer{text-align:center;color:#444;font-size:12px;padding-bottom:30px}
+  .footer span{color:#666}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- Gateway Badge -->
-  <div class="gateway-badge">
-    ⚡ &nbsp; O F F I C I A L &nbsp; P A I R I N G &nbsp; G A T E W A Y &nbsp; ⚡
+<div class="banner">⚡ YOUSAF-MD — OFFICIAL PAIRING GATEWAY ⚡</div>
+
+<div class="container">
+
+  <!-- Clock -->
+  <div class="clock-box">
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="clock-labels"><span>HOUR</span><span>MIN</span><span>SEC</span></div>
+    <div class="day-badge" id="dayBadge">---</div>
   </div>
 
-  <!-- Main Title -->
-  <h1 class="main-title">YOUSAF-MD</h1>
-  <p class="sub-title">W H A T S A P P &nbsp; M U L T I - D E V I C E &nbsp; B O T &nbsp; S Y S T E M</p>
-
-  <!-- Premium Badge -->
-  <div class="premium-badge">💎 &nbsp; ULTRA PRO PREMIUM &nbsp; 💎</div>
-
-  <!-- Live Clock -->
-  <div class="clock-wrap">
-    <div class="clock-part">
-      <div class="clock-num" id="ch">00</div>
-      <div class="clock-label">HOUR</div>
-    </div>
-    <div class="clock-dot">:</div>
-    <div class="clock-part">
-      <div class="clock-num" id="cm">00</div>
-      <div class="clock-label">MIN</div>
-    </div>
-    <div class="clock-dot">:</div>
-    <div class="clock-part">
-      <div class="clock-num" id="cs">00</div>
-      <div class="clock-label">SEC</div>
-    </div>
-    <div class="day-badge" id="cday">---</div>
+  <!-- Connecting status -->
+  <div class="status-box" id="statusBox">
+    <div class="spinner"></div>
+    <div id="statusText" style="color:#00fff7;font-size:14px">Connecting to WhatsApp...</div>
   </div>
 
-  <!-- Pairing Code Box (shown after generate) -->
+  <!-- Pairing code card -->
   <div class="code-card" id="codeCard">
-    <div class="code-label-text">⚡ YOUR PAIRING CODE ⚡</div>
-    <div class="code-digits" id="codeVal">----</div>
-    <p class="code-instruction">
-      Open WhatsApp → <strong>Linked Devices</strong><br/>
-      → <strong>Link a Device</strong> → <strong>Link with Phone Number</strong><br/>
+    <div class="code-label">⚡ YOUR PAIRING CODE ⚡</div>
+    <div class="code-digits" id="codeDigits">---- ----</div>
+    <div class="code-hint">
+      Open WhatsApp → <b>Settings</b> → <b>Linked Devices</b><br/>
+      → <b>Link a Device</b> → <b>Link with Phone Number</b><br/>
       → Enter this code
-    </p>
-    <div class="wait-status" id="waitMsg">
-      <span class="spin" style="border-top-color:#f59e0b;border-color:rgba(245,158,11,0.3);"></span>
-      Waiting for WhatsApp verification...
     </div>
+    <div class="code-error" id="codeError"></div>
   </div>
 
-  <!-- Session Result (shown after connected) -->
+  <!-- Session card -->
   <div class="session-card" id="sessionCard">
-    <div class="success-big">✅</div>
-    <div class="session-title">🎉 SESSION ID GENERATED — CHECK YOUR WHATSAPP!</div>
-    <p style="color:#94a3b8;font-size:13px;margin-bottom:14px;">
-      Your SESSION_ID has been sent to your WhatsApp inbox.<br/>
-      You can also copy it from here:
-    </p>
-    <div class="session-val" id="sessionVal"></div>
-    <button class="copy-btn" onclick="copySession()">📋 Copy SESSION_ID</button>
-    <p class="copy-msg" id="copyMsg"></p>
+    <div class="session-title">✅ SESSION ID GENERATED!</div>
+    <div class="session-id" id="sessionIdBox"></div>
+    <button class="copy-btn" onclick="copySession()">📋 COPY SESSION ID</button>
   </div>
 
-  <!-- Pairing Form Card -->
-  <div class="card" id="formCard">
-    <div class="card-icon">🔑</div>
-    <div class="card-title">Pairing Code Generator</div>
-    <div class="card-sub">Enter your WhatsApp number to get your 8-digit pairing code</div>
-
-    <div class="input-label">📱 &nbsp; WHATSAPP NUMBER</div>
-    <div class="input-wrap">
-      <span class="input-icon">📲</span>
-      <input type="tel" id="numInput" placeholder="923XXXXXXXXX"/>
-    </div>
-    <p class="input-hint">Country code — no + or spaces &nbsp; (e.g. 923001234567)</p>
-
-    <button class="gen-btn" id="genBtn" onclick="startPairing()">
+  <!-- Form -->
+  <div class="form-card" id="formCard">
+    <div class="form-icon">🔑</div>
+    <div class="form-title">Pairing Code Generator</div>
+    <div class="form-sub">Enter your WhatsApp number to get your 8-digit pairing code</div>
+    <label class="input-label">📱 WHATSAPP NUMBER</label>
+    <input class="phone-input" id="phoneInput" type="tel" placeholder="923001234567" maxlength="15"/>
+    <div class="phone-hint">Country code — no + or spaces &nbsp; (e.g. 923001234567)</div>
+    <button class="generate-btn" id="generateBtn" onclick="generateCode()">
       🔑 &nbsp; GENERATE PAIRING CODE
     </button>
-    <p class="status-msg" id="formStatus"></p>
+  </div>
 
-    <!-- How to use -->
-    <div class="how-card">
-      <div class="how-title">ℹ️ &nbsp; HOW TO USE THIS CODE</div>
-      <ul class="how-steps">
-        <li><span class="step-num">1</span>Open WhatsApp → Settings → Linked Devices</li>
-        <li><span class="step-num">2</span>Tap "Link a Device" → "Link with Phone Number"</li>
-        <li><span class="step-num">3</span>Enter the 8-digit pairing code shown above</li>
-        <li><span class="step-num">4</span>Your SESSION ID will arrive in your WhatsApp inbox 🚀</li>
-      </ul>
+  <!-- Steps -->
+  <div class="steps-card">
+    <div class="steps-title">ℹ️ &nbsp; HOW TO USE THIS CODE</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Open WhatsApp → Settings → Linked Devices</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Tap "Link a Device" → "Link with Phone Number"</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Enter the 8-digit pairing code shown above</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">Your SESSION ID will arrive in your WhatsApp inbox 🚀</div>
     </div>
   </div>
 
-  <!-- Social Media Section -->
-  <div class="social-title">
-    ⚡ &nbsp; CONNECT WITH MUHAMMAD YOUSAF BALOCH &nbsp; ⚡
-  </div>
+  <!-- Social -->
   <div class="social-grid">
-    <a class="social-card" href="https://youtube.com/@Yousaf_Baloch_Tech" target="_blank">
-      <div class="social-icon">📺</div>
-      <div class="social-name">YouTube</div>
-      <div class="social-handle">YOUSAF BALOCH TECH</div>
+    <a class="social-btn" href="https://youtube.com/@Yousaf_Baloch_Tech" target="_blank">
+      <span class="social-icon">📺</span>YouTube
     </a>
-    <a class="social-card" href="https://tiktok.com/@loser_boy.110" target="_blank">
-      <div class="social-icon">🎵</div>
-      <div class="social-name">TikTok</div>
-      <div class="social-handle">@LOSER_BOY.110</div>
+    <a class="social-btn" href="https://tiktok.com/@loser_boy.110" target="_blank">
+      <span class="social-icon">🎵</span>TikTok
     </a>
-    <a class="social-card" href="https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j" target="_blank">
-      <div class="social-icon">📢</div>
-      <div class="social-name">WhatsApp Channel</div>
-      <div class="social-handle">OFFICIAL UPDATES</div>
+    <a class="social-btn" href="https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j" target="_blank">
+      <span class="social-icon">📢</span>Channel
     </a>
-    <a class="social-card" href="https://github.com/yousafpubg110-tech" target="_blank">
-      <div class="social-icon">💻</div>
-      <div class="social-name">GitHub</div>
-      <div class="social-handle">YOUSAFPUBG110-TECH</div>
+    <a class="social-btn" href="https://github.com/yousafpubg110-tech/YOUSAF-MD" target="_blank">
+      <span class="social-icon">💻</span>GitHub
     </a>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
-    <p>Created with ❤️ by <strong>Muhammad Yousaf Baloch</strong></p>
-    <p><span class="wa">📱 WhatsApp: +923710636110</span></p>
-    <p>© 2026 YOUSAF-MD | All Rights Reserved</p>
+    Muhammad Yousaf Baloch &nbsp;|&nbsp; +923710636110<br/>
+    <span>© 2026 YOUSAF-MD — All Rights Reserved</span>
   </div>
 
 </div>
 
 <script>
-// ── Live Clock ───────────────────────────────────────────────────
-const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-function updateClock(){
+// ── Clock ──────────────────────────────────────────────────────
+const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+function updateClock() {
   const now = new Date();
-  document.getElementById('ch').textContent   = String(now.getHours()).padStart(2,'0');
-  document.getElementById('cm').textContent   = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('cs').textContent   = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('cday').textContent = DAYS[now.getDay()];
+  const h   = String(now.getHours()).padStart(2,'0');
+  const m   = String(now.getMinutes()).padStart(2,'0');
+  const s   = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent    = `${h}:${m}:${s}`;
+  document.getElementById('dayBadge').textContent = days[now.getDay()];
 }
-updateClock();
 setInterval(updateClock, 1000);
+updateClock();
 
-// ── Pairing logic ────────────────────────────────────────────────
+// ── State ──────────────────────────────────────────────────────
+let pollInterval = null;
 let currentSessionId = null;
-let pollTimer        = null;
+let sessionData = null;
 
-async function startPairing(){
-  const number = document.getElementById('numInput').value.trim();
-  if(!number){ setStatus('formStatus','❌ Please enter your phone number','err'); return; }
+// ── Generate ───────────────────────────────────────────────────
+async function generateCode() {
+  const number = document.getElementById('phoneInput').value.trim();
+  if (!number || number.length < 10) {
+    alert('Please enter a valid WhatsApp number');
+    return;
+  }
 
-  const btn = document.getElementById('genBtn');
+  const btn = document.getElementById('generateBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> &nbsp; Generating...';
-  setStatus('formStatus','');
+  btn.textContent = '⏳  Connecting...';
 
-  try{
-    const res  = await fetch('/pair',{
-      method :'POST',
-      headers:{'Content-Type':'application/json'},
-      body   :JSON.stringify({number}),
+  // Reset UI
+  hide('codeCard');
+  hide('sessionCard');
+  document.getElementById('codeError').textContent = '';
+  document.getElementById('codeDigits').textContent = '---- ----';
+
+  // Show connecting
+  show('statusBox');
+  document.getElementById('statusText').textContent = 'Connecting to WhatsApp...';
+
+  try {
+    const res  = await fetch('/pair', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ number }),
     });
     const data = await res.json();
 
-    if(!res.ok || data.error){
-      setStatus('formStatus','❌ '+(data.error||'Failed. Try again.'),'err');
-      btn.disabled = false;
-      btn.innerHTML = '🔑 &nbsp; GENERATE PAIRING CODE';
-      return;
+    if (!data.sessionId) {
+      throw new Error(data.error || 'Failed to start pairing');
     }
 
     currentSessionId = data.sessionId;
 
-    // Show code card
-    document.getElementById('codeVal').textContent    = data.code;
-    document.getElementById('codeCard').style.display = 'block';
-    document.getElementById('formCard').style.opacity = '0.4';
-    document.getElementById('formCard').style.pointerEvents = 'none';
+    // Start polling for code
+    document.getElementById('statusText').textContent = 'Waiting for pairing code...';
+    startPolling();
 
-    // Start polling
-    pollTimer = setInterval(pollStatus, 3000);
-
-  }catch(e){
-    setStatus('formStatus','❌ Network error. Try again.','err');
-    btn.disabled = false;
-    btn.innerHTML = '🔑 &nbsp; GENERATE PAIRING CODE';
+  } catch (e) {
+    hide('statusBox');
+    showError(e.message);
+    resetBtn();
   }
 }
 
-async function pollStatus(){
-  if(!currentSessionId) return;
-  try{
-    const res  = await fetch('/status/'+currentSessionId);
-    const data = await res.json();
+// ── Poll /status ───────────────────────────────────────────────
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  let tries = 0;
+  const MAX = 60; // 60 * 2s = 2 minutes max
 
-    if(data.status === 'connected' && data.sessionId){
-      clearInterval(pollTimer);
-      document.getElementById('codeCard').style.display   = 'none';
-      document.getElementById('sessionCard').style.display = 'block';
-      document.getElementById('sessionVal').textContent   = data.sessionId;
-    } else if(data.status === 'failed'){
-      clearInterval(pollTimer);
-      document.getElementById('waitMsg').innerHTML =
-        '❌ Pairing failed. Please refresh and try again.';
-      document.getElementById('waitMsg').style.color = '#f87171';
+  pollInterval = setInterval(async () => {
+    tries++;
+    if (tries > MAX) {
+      clearInterval(pollInterval);
+      hide('statusBox');
+      showError('Timeout. Please try again.');
+      resetBtn();
+      return;
     }
-  }catch(_){}
+
+    try {
+      const res  = await fetch(`/status/${currentSessionId}`);
+      const data = await res.json();
+
+      console.log('Poll:', data);
+
+      if (data.status === 'code_ready' && data.code) {
+        // Show pairing code
+        hide('statusBox');
+        document.getElementById('codeDigits').textContent = data.code;
+        document.getElementById('codeError').textContent  = '';
+        show('codeCard');
+        document.getElementById('statusText').textContent = 'Waiting for WhatsApp connection...';
+        show('statusBox');
+      }
+
+      if (data.status === 'connected' && data.sessionId) {
+        clearInterval(pollInterval);
+        hide('statusBox');
+        show('codeCard');
+        sessionData = data.sessionId;
+        document.getElementById('sessionIdBox').textContent = data.sessionId;
+        show('sessionCard');
+        resetBtn();
+      }
+
+      if (data.status === 'failed' || data.status === 'error') {
+        clearInterval(pollInterval);
+        hide('statusBox');
+        showError('Pairing failed. Please try again.');
+        resetBtn();
+      }
+
+    } catch (e) {
+      console.error('Poll error:', e);
+    }
+  }, 2000);
 }
 
-function copySession(){
-  const text = document.getElementById('sessionVal').textContent;
-  navigator.clipboard.writeText(text)
-    .then(()=>{ document.getElementById('copyMsg').textContent='✅ Copied! Paste as SESSION_ID in .env'; })
-    .catch(()=>{ document.getElementById('copyMsg').textContent='⚠️ Copy manually please'; });
+// ── Copy session ───────────────────────────────────────────────
+function copySession() {
+  if (!sessionData) return;
+  navigator.clipboard.writeText(sessionData).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ COPIED!';
+    setTimeout(() => { btn.textContent = '📋 COPY SESSION ID'; }, 2000);
+  });
 }
 
-function setStatus(id,msg,cls=''){
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.className   = 'status-msg '+cls;
+// ── Helpers ────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).classList.add('show'); }
+function hide(id) { document.getElementById(id).classList.remove('show'); }
+
+function showError(msg) {
+  show('codeCard');
+  document.getElementById('codeError').textContent = '❌ ' + msg;
+  document.getElementById('codeDigits').textContent = '---- ----';
+}
+
+function resetBtn() {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled    = false;
+  btn.textContent = '🔑   GENERATE PAIRING CODE';
 }
 </script>
 </body>
