@@ -55,16 +55,7 @@ function buildWelcomeText() {
 }
 
 function buildSessionText(sessionStr) {
-  return (
-    `╭─『 🔗 *SOCIAL MEDIA* 』\n` +
-    `│ 📢 https://whatsapp.com/channel/0029Vb3Uzps6buMH2RvGef0j\n` +
-    `│ 📺 https://youtube.com/@Yousaf_Baloch_Tech\n` +
-    `│ 🎵 https://tiktok.com/@loser_boy.110\n` +
-    `│ 💻 https://github.com/yousafpubg110-tech/YOUSAF-MD\n` +
-    `╰──────────────────────────\n\n` +
-    `🔑 *YOUR SESSION ID:*\n\n` +
-    `${sessionStr}`
-  );
+  return sessionStr;
 }
 
 // ── Background pairing ───────────────────────────────────────────
