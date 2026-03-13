@@ -68,70 +68,88 @@ function buildSessionText(sessionStr) {
   );
 }
 
-// ── POST /pair ───────────────────────────────────────────────────
-app.post('/pair', async (req, res) => {
-  const { number } = req.body;
-  if (!number) return res.status(400).json({ error: 'Phone number is required' });
-
-  const cleaned = number.replace(/[^0-9]/g, '');
-  if (cleaned.length < 10) return res.status(400).json({ error: 'Invalid phone number' });
-
-  const sessionId  = makeId();
+// ── Main pairing function ────────────────────────────────────────
+async function startPairing(cleaned, sessionId) {
   const sessionDir = `./sessions/${sessionId}`;
+  if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
 
-  try {
-    if (!fs.existsSync('./sessions')) fs.mkdirSync('./sessions', { recursive: true });
+  const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
-    const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+  const sock = makeWASocket({
+    auth: {
+      creds: state.creds,
+      keys : makeCacheableSignalKeyStore(state.keys, logger),
+    },
+    printQRInTerminal   : false,
+    logger,
+    browser             : ['YOUSAF-MD', 'Chrome', '1.0.0'],
+    connectTimeoutMs    : 60000,
+    keepAliveIntervalMs : 10000,
+    markOnlineOnConnect : false,
+  });
 
-    const sock = makeWASocket({
-      auth: {
-        creds: state.creds,
-        keys : makeCacheableSignalKeyStore(state.keys, logger),
-      },
-      printQRInTerminal   : false,
-      logger,
-      browser             : ['YOUSAF-MD', 'Chrome', '1.0.0'],
-      connectTimeoutMs    : 60000,
-      keepAliveIntervalMs : 10000,
-      markOnlineOnConnect : false,
-    });
+  sessions.set(sessionId, {
+    sock,
+    saveCreds,
+    status    : 'pending',
+    code      : null,
+    sessionStr: null,
+    number    : cleaned,
+  });
 
-    sessions.set(sessionId, {
-      sock,
-      saveCreds,
-      status    : 'pending',
-      code      : null,
-      sessionStr: null,
-      number    : cleaned,
-    });
+  sock.ev.on('creds.update', saveCreds);
 
-    // ── Request pairing code immediately after socket is created ─
-    // This is the correct Baileys flow — call BEFORE connection opens
-    try {
-      const code      = await sock.requestPairingCode(cleaned);
-      const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
-      const s         = sessions.get(sessionId);
-      if (s) {
-        s.code   = formatted;
-        s.status = 'code_ready';
+  return new Promise((resolve, reject) => {
+    let codeRequested = false;
+    let resolved      = false;
+
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        const s = sessions.get(sessionId);
+        if (s) s.status = 'failed';
+        try { sock.end(); } catch (_) {}
+        reject(new Error('Timeout — could not connect to WhatsApp'));
       }
-      console.log(`[${sessionId}] Pairing code: ${formatted}`);
-    } catch (e) {
-      console.error(`[${sessionId}] requestPairingCode error:`, e.message);
-      sessions.delete(sessionId);
-      try { sock.end(); } catch (_) {}
-      return res.status(500).json({ error: 'Could not generate pairing code. Try again.' });
-    }
+    }, 30000);
 
-    // ── Connection event handler ─────────────────────────────────
     sock.ev.on('connection.update', async (update) => {
-      const { connection, lastDisconnect } = update;
+      const { connection, lastDisconnect, qr, isNewLogin } = update;
       const s = sessions.get(sessionId);
       if (!s) return;
 
-      console.log(`[${sessionId}] connection:`, connection);
+      console.log(`[${sessionId}] update:`, JSON.stringify({ connection, hasQR: !!qr, isNewLogin }));
 
+      // ── Request pairing code when WhatsApp shows QR ──────────
+      // This means socket is connected to WA servers & ready
+      if (qr && !codeRequested) {
+        codeRequested = true;
+        console.log(`[${sessionId}] QR received — requesting pairing code instead...`);
+        try {
+          const code      = await sock.requestPairingCode(cleaned);
+          const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+          s.code   = formatted;
+          s.status = 'code_ready';
+          console.log(`[${sessionId}] ✅ Pairing code: ${formatted}`);
+
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            resolve(formatted);
+          }
+        } catch (e) {
+          console.error(`[${sessionId}] requestPairingCode failed:`, e.message);
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            s.status = 'failed';
+            try { sock.end(); } catch (_) {}
+            reject(e);
+          }
+        }
+      }
+
+      // ── User entered code — WhatsApp connected ───────────────
       if (connection === 'open') {
         console.log(`[${sessionId}] ✅ WhatsApp connected!`);
         await saveCreds();
@@ -148,7 +166,7 @@ app.post('/pair', async (req, res) => {
 
           const jid = cleaned + '@s.whatsapp.net';
 
-          // Message 1 — welcome + social links
+          // Message 1 — welcome
           try {
             const thumbPath = path.resolve('./assets/bot-thumb.png');
             if (fs.existsSync(thumbPath)) {
@@ -165,7 +183,7 @@ app.post('/pair', async (req, res) => {
 
           await new Promise(r => setTimeout(r, 2000));
 
-          // Message 2 — SESSION_ID separate
+          // Message 2 — SESSION_ID
           try {
             await sock.sendMessage(jid, { text: buildSessionText(fullId) });
           } catch (e) {
@@ -182,35 +200,46 @@ app.post('/pair', async (req, res) => {
         setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
       }
 
+      // ── Connection closed ────────────────────────────────────
       if (connection === 'close') {
         const statusCode = lastDisconnect?.error?.output?.statusCode;
-        const s = sessions.get(sessionId);
-        if (!s) return;
+        console.log(`[${sessionId}] Closed. statusCode: ${statusCode} | status: ${s.status}`);
 
-        console.log(`[${sessionId}] Connection closed. Code: ${statusCode}`);
-
-        // If already connected — ignore close
         if (s.status === 'connected') return;
-
-        // If code shown — user is still entering code, do NOT mark failed
         if (s.status === 'code_ready') {
-          console.log(`[${sessionId}] Code ready, waiting for user to enter...`);
+          // User is still entering code — do NOT fail
+          console.log(`[${sessionId}] Code shown, waiting for user...`);
           return;
         }
 
         s.status = 'failed';
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timeout);
+          reject(new Error('Connection closed before pairing'));
+        }
       }
     });
+  });
+}
 
-    sock.ev.on('creds.update', saveCreds);
+// ── POST /pair ───────────────────────────────────────────────────
+app.post('/pair', async (req, res) => {
+  const { number } = req.body;
+  if (!number) return res.status(400).json({ error: 'Phone number is required' });
 
-    const s = sessions.get(sessionId);
-    return res.json({ sessionId, code: s.code });
+  const cleaned = number.replace(/[^0-9]/g, '');
+  if (cleaned.length < 10) return res.status(400).json({ error: 'Invalid phone number' });
 
+  const sessionId = makeId();
+
+  try {
+    const code = await startPairing(cleaned, sessionId);
+    return res.json({ sessionId, code });
   } catch (e) {
-    console.error('[PAIRING] Fatal error:', e.message);
+    console.error('[/pair] Error:', e.message);
     sessions.delete(sessionId);
-    return res.status(500).json({ error: 'Server error. Try again.' });
+    return res.status(500).json({ error: 'Could not generate pairing code. Try again.' });
   }
 });
 
@@ -230,7 +259,7 @@ app.get('/status/:sessionId', (req, res) => {
   return res.json({ status: s.status, code: s.code });
 });
 
-// ── Health check ─────────────────────────────────────────────────
+// ── Health ────────────────────────────────────────────────────────
 app.get('/health', (_, res) => res.json({
   status  : 'ok',
   bot     : 'YOUSAF-MD-PAIRING',
