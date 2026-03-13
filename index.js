@@ -13,8 +13,8 @@ import pino              from 'pino';
 import {
   makeWASocket,
   useMultiFileAuthState,
-  DisconnectReason,
   makeCacheableSignalKeyStore,
+  Browsers,
 } from '@whiskeysockets/baileys';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -63,7 +63,7 @@ function buildSessionText(sessionStr) {
   );
 }
 
-// ── Background pairing — runs without blocking HTTP ──────────────
+// ── Background pairing ───────────────────────────────────────────
 function runPairing(cleaned, sessionId) {
   const sessionDir = `./sessions/${sessionId}`;
 
@@ -80,7 +80,7 @@ function runPairing(cleaned, sessionId) {
         },
         printQRInTerminal   : false,
         logger,
-        browser             : ['Ubuntu', 'Chrome', '20.0.04'],
+        browser             : Browsers.ubuntu('Chrome'),
         connectTimeoutMs    : 60000,
         keepAliveIntervalMs : 10000,
         markOnlineOnConnect : false,
@@ -100,11 +100,10 @@ function runPairing(cleaned, sessionId) {
 
         console.log(`[${sessionId}] connection: ${connection} | qr: ${!!qr}`);
 
-        // ── QR received = socket connected to WA servers ─────
+        // QR آنے کا مطلب socket WA servers سے connect ہو گیا
         if (qr && !codeRequested) {
           codeRequested = true;
-          console.log(`[${sessionId}] QR ready — requesting pairing code...`);
-
+          console.log(`[${sessionId}] Requesting pairing code...`);
           try {
             const code      = await sock.requestPairingCode(cleaned);
             const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
@@ -118,9 +117,9 @@ function runPairing(cleaned, sessionId) {
           }
         }
 
-        // ── User entered code successfully ───────────────────
+        // User نے code enter کر دیا
         if (connection === 'open') {
-          console.log(`[${sessionId}] ✅ Connected!`);
+          console.log(`[${sessionId}] ✅ WhatsApp Connected!`);
           await saveCreds();
 
           try {
@@ -134,7 +133,6 @@ function runPairing(cleaned, sessionId) {
 
             const jid = `${cleaned}@s.whatsapp.net`;
 
-            // Send welcome message
             try {
               const thumb = path.resolve('./assets/bot-thumb.png');
               if (fs.existsSync(thumb)) {
@@ -151,12 +149,13 @@ function runPairing(cleaned, sessionId) {
 
             await new Promise(r => setTimeout(r, 2000));
 
-            // Send session ID
             try {
               await sock.sendMessage(jid, { text: buildSessionText(fullId) });
             } catch (e) {
               console.error(`[${sessionId}] Session msg error:`, e.message);
             }
+
+            console.log(`[${sessionId}] ✅ Messages sent!`);
 
           } catch (e) {
             s.status = 'error';
@@ -166,31 +165,24 @@ function runPairing(cleaned, sessionId) {
           setTimeout(() => { try { sock.end(); } catch (_) {} }, 5000);
         }
 
-        // ── Connection closed ────────────────────────────────
         if (connection === 'close') {
           const code = lastDisconnect?.error?.output?.statusCode;
           console.log(`[${sessionId}] Closed. code: ${code} | status: ${s.status}`);
-
           if (s.status === 'connected') return;
-          if (s.status === 'code_ready') {
-            // User still entering code — keep alive
-            console.log(`[${sessionId}] Waiting for user to enter code...`);
-            return;
-          }
-
+          if (s.status === 'code_ready') return; // user ابھی code enter کر رہا ہے
           s.status = 'failed';
         }
       });
 
     } catch (e) {
-      console.error(`[${sessionId}] runPairing error:`, e.message);
+      console.error(`[${sessionId}] Fatal:`, e.message);
       const s = sessions.get(sessionId);
       if (s) s.status = 'failed';
     }
   })();
 }
 
-// ── POST /pair — returns immediately ────────────────────────────
+// ── POST /pair ───────────────────────────────────────────────────
 app.post('/pair', (req, res) => {
   const { number } = req.body;
   if (!number) return res.status(400).json({ error: 'Phone number required' });
@@ -200,19 +192,16 @@ app.post('/pair', (req, res) => {
 
   const sessionId = makeId();
 
-  // Store session immediately
   sessions.set(sessionId, {
-    sock     : null,
-    status   : 'connecting',
-    code     : null,
+    sock      : null,
+    status    : 'connecting',
+    code      : null,
     sessionStr: null,
-    number   : cleaned,
+    number    : cleaned,
   });
 
-  // Start pairing in background — don't await
   runPairing(cleaned, sessionId);
 
-  // Return sessionId immediately — frontend will poll /status
   return res.json({ sessionId, status: 'connecting' });
 });
 
@@ -239,12 +228,10 @@ app.get('/health', (_, res) => res.json({
   sessions: sessions.size,
 }));
 
-// ── Frontend ──────────────────────────────────────────────────────
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ── Start ────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 YOUSAF-MD-PAIRING running on port ${PORT}`);
 });
